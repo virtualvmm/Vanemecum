@@ -16,6 +16,13 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 150)->unique(); // Nombre único del tratamiento (ej: 'Antiviral específico', 'Vacunación')
             $table->text('descripcion'); // Instrucciones, dosificación o detalles completos del tratamiento
+            
+            // CORRECCIÓN: Hacemos la columna 'duracion_dias' nullable para evitar el error 1048
+            // Esto permite que el seeder funcione si por alguna razón inserta NULL.
+            $table->unsignedSmallInteger('duracion_dias')
+                  ->nullable() // ¡ESTA ES LA CLAVE!
+                  ->comment('Duración estimada del tratamiento en días');
+            
             $table->timestamps();
         });
     }

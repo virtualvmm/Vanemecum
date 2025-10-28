@@ -4,30 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Representa la tabla 'sintomas'.
+ */
 class Sintoma extends Model
 {
     use HasFactory;
 
-    // CRÍTICO: Define el nombre exacto de la tabla en la base de datos (plural)
-    protected $table = 'sintomas';
-
-    public $timestamps = true;
-
-    protected $fillable = [
-        'nombre',
-        'descripcion',
-        'gravedad', // Podrías usar valores como 'Leve', 'Moderado', 'Grave'
-    ];
-
-    /**
-     * Relación Muchos a Muchos con Patogenos.
-     * Define qué patógenos pueden causar este síntoma.
-     */
-    public function patogenos(): BelongsToMany
+    // Relación N:M con Patógenos
+    public function patogenos()
     {
-        // La tabla pivote por defecto es 'patogeno_sintoma', que es correcta para este caso.
+        // 'belongsToMany' indica la relación de muchos a muchos a través de la tabla pivote.
         return $this->belongsToMany(Patogeno::class, 'patogeno_sintoma');
     }
 }

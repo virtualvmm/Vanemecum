@@ -7,66 +7,66 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Representa la tabla principal 'patogenos'.
+ * Es el modelo central que se relaciona con todos los demás.
+ */
 class Patogeno extends Model
 {
     use HasFactory;
 
-    // CRÍTICO: Sobreescribe el nombre de la tabla por defecto (de 'patogenos' a 'patogenos')
     protected $table = 'patogenos';
 
     public $timestamps = true;
 
+    // Campos que pueden ser asignados masivamente
     protected $fillable = [
-        'nombre_comun',
-        'nombre_cientifico',
-        'agente_etiologico',
-        'ciclo_vida',
-        'imagen_url',
-        'tipo_id',
+        'nombre',
+        'descripcion',
+        'tipo_patogeno_id', // Clave foránea al tipo
     ];
-    
-    /* -------------------------------------------------------------------------- */
-    /* RELACIONES */
-    /* -------------------------------------------------------------------------- */
+
+    /* ----------------------------------------------------------------------
+     * RELACIONES N:1
+     * ----------------------------------------------------------------------
+     */
 
     /**
-     * Relación N:1: Muchos Patogenos pertenecen a un TipoPatogeno.
-     * (El Patógeno tiene una clave foránea 'tipo_id').
+     * Relación N:1: Un Patogeno pertenece a un único TipoPatogeno (Virus, Bacteria, Hongo).
+     * Esta es la relación inversa a la HasMany definida en TipoPatogeno.php.
+     *
+     * @return BelongsTo
      */
     public function tipo(): BelongsTo
     {
-        return $this->belongsTo(TipoPatogeno::class, 'tipo_id');
+        // Usa la clave foránea 'tipo_patogeno_id' en esta tabla.
+        return $this->belongsTo(TipoPatogeno::class, 'tipo_patogeno_id');
     }
 
-    /**
-     * Relación Muchos a Muchos con Usuarios (Mi Vademecum / Colección).
-     * Permite saber qué patógenos ha añadido un usuario a su colección personal.
+    /* ----------------------------------------------------------------------
+     * RELACIONES N:M (Muchos a Muchos)
+     * ----------------------------------------------------------------------
      */
-    public function usuarios(): BelongsToMany
-    {
-        // La tabla pivote es 'user_patogeno'.
-        return $this->belongsToMany(User::class, 'user_patogeno', 'patogeno_id', 'user_id')
-                    ->withPivot('estado_coleccion') // Atributo extra en la tabla pivote
-                    ->withTimestamps();
-    }
-    
+
     /**
-     * Relación Muchos a Muchos con Síntomas.
-     * Define los síntomas asociados a este patógeno.
+     * Relación N:M: Un Patogeno tiene muchos Sintomas, y un Sintoma se relaciona con muchos Patogenos.
+     *
+     * @return BelongsToMany
      */
     public function sintomas(): BelongsToMany
     {
-        // La tabla pivote es 'patogeno_sintoma'.
+        // El segundo argumento es la tabla pivote que definimos en la migración.
         return $this->belongsToMany(Sintoma::class, 'patogeno_sintoma');
     }
 
     /**
-     * Relación Muchos a Muchos con Tratamientos.
-     * Define los tratamientos aplicables a este patógeno.
+     * Relación N:M: Un Patogeno tiene muchos Tratamientos, y un Tratamiento se relaciona con muchos Patogenos.
+     *
+     * @return BelongsToMany
      */
     public function tratamientos(): BelongsToMany
     {
-        // La tabla pivote es 'patogeno_tratamiento'.
+        // El segundo argumento es la tabla pivote que definimos en la migración.
         return $this->belongsToMany(Tratamiento::class, 'patogeno_tratamiento');
     }
 }

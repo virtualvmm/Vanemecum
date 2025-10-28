@@ -3,28 +3,40 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB; // <-- NECESARIO para deshabilitar las FKs
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Ejecuta los seeders de la aplicación.
-     * Este método se encarga de llamar a todos los seeders necesarios
-     * para la inicialización completa del sistema Vanemecum.
+     * Seed the application's database.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-        // NOTA IMPORTANTE:
-        // El orden es CRÍTICO, ya que AuxiliarSeeder (Roles, Tipos, Fuentes)
-        // debe ejecutarse antes que PatogenoSeeder, que depende de esos datos.
+        // ---------------------------------------------------------------------
+        // IMPORTANTE: Desactivar temporalmente las restricciones de claves foráneas
+        // Esto previene errores de "Cannot truncate" en tablas relacionadas (N:M).
+        // Solo es necesario para MySQL/MariaDB.
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // ---------------------------------------------------------------------
 
+        // 1. Tablas de datos auxiliares (SIN dependencias)
         $this->call([
-            // 1. Carga de datos auxiliares estáticos (Roles, Tipos, Fuentes)
-            // y creación del usuario 'admin@admin.com'.
-            AuxiliarSeeder::class,
-            
-            // 2. Carga de datos de Patógenos, Síntomas, Tratamientos de prueba.
-            // Descomenta la línea si quieres datos de ejemplo.
-            // PatogenoSeeder::class, 
+            AuxiliarSeeder::class,     // Asumimos que aquí está TipoPatogenoSeeder
+            SintomaSeeder::class,      // Siembra los datos de síntomas
+            TratamientoSeeder::class,  // Siembra los datos de tratamientos
         ]);
+
+        // 2. Tablas principales y tablas pivote (CON dependencias)
+        // PatogenoSeeder DEBE ir al final, ya que utiliza los datos sembrados anteriormente.
+        $this->call([
+            PatogenoSeeder::class,
+        ]);
+        
+        // ---------------------------------------------------------------------
+        // IMPORTANTE: Volver a activar las restricciones
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // ---------------------------------------------------------------------
     }
 }
