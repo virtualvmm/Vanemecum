@@ -1,191 +1,208 @@
-<!-- resources/views/patogenos/edit.blade.php -->
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Editar Patógeno') }}: <span class="text-indigo-600">{{ $patogeno->nombre }}</span>
+        </h2>
+    </x-slot>
 
-@extends('layouts.app')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-8">
 
-@section('content')
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Editar Patógeno: {{ $patogeno->nombre }}</h1>
-            <a href="{{ route('patogenos.index') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                <i class="fas fa-arrow-left mr-2"></i> Volver al Listado
-            </a>
-        </div>
+                {{-- Botón de Regreso --}}
+                <a href="{{ route('patogenos.index') }}" class="text-indigo-600 hover:text-indigo-800 mb-6 inline-flex items-center transition duration-150">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    {{ __('Volver a la Administración') }}
+                </a>
 
-        <!-- Manejo de Errores -->
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
-                <strong class="font-bold">¡Error de validación!</strong>
-                <span class="block sm:inline">Por favor, corrija los siguientes errores:</span>
-                <ul class="mt-2 list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+                {{-- Formulario de Edición (PATCH) --}}
+                <form action="{{ route('patogenos.update', $patogeno) }}" method="POST" enctype="multipart/form-data" class="space-y-6 mt-4">
+                    @csrf
+                    @method('PATCH') {{-- O PUT, pero PATCH es el estándar para actualizaciones parciales --}}
 
-        <div class="bg-white shadow-xl rounded-xl p-6 lg:p-8">
-            <!-- El método es POST, pero usamos @method('PUT') para la actualización -->
-            <form action="{{ route('patogenos.update', $patogeno->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <!-- Sección de Información Básica -->
-                <h2 class="text-2xl font-semibold border-b pb-2 mb-6 text-gray-700">Información General</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nombre -->
-                    <div>
-                        <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre (científico/principal)</label>
-                        <input type="text" name="nombre" id="nombre" 
-                               value="{{ old('nombre', $patogeno->nombre) }}" 
-                               class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('nombre') border-red-500 @enderror" 
-                               required>
-                        @error('nombre')
-                            <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Tipo de Patógeno (Relación 1:N) -->
-                    <div>
-                        <label for="tipo_id" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Patógeno</label>
-                        <select name="tipo_id" id="tipo_id" 
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('tipo_id') border-red-500 @enderror">
-                            <option value="">Seleccione Tipo</option>
-                            @foreach ($tipos as $tipo)
-                                <option value="{{ $tipo->id }}" 
-                                        {{ old('tipo_id', $patogeno->tipo_id) == $tipo->id ? 'selected' : '' }}>
-                                    {{ $tipo->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('tipo_id')
-                            <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Fuente (Relación 1:N - Si es nullable) -->
-                    <div>
-                        <label for="fuente_id" class="block text-sm font-medium text-gray-700 mb-1">Fuente Principal (Ej: OMS, CDC)</label>
-                        <select name="fuente_id" id="fuente_id" 
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('fuente_id') border-red-500 @enderror">
-                            <option value="">Sin Fuente</option>
-                            @foreach ($fuentes as $fuente)
-                                <option value="{{ $fuente->id }}" 
-                                        {{ old('fuente_id', $patogeno->fuente_id) == $fuente->id ? 'selected' : '' }}>
-                                    {{ $fuente->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('fuente_id')
-                            <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Estado (is_active) -->
-                    <div class="flex items-center pt-6">
-                        <input type="hidden" name="is_active" value="0">
-                        <input type="checkbox" name="is_active" id="is_active" value="1" 
-                                {{ old('is_active', $patogeno->is_active) ? 'checked' : '' }}
-                                class="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                        <label for="is_active" class="ml-2 block text-sm font-medium text-gray-700">Patógeno Activo (Visible en Guía)</label>
-                    </div>
-                </div>
-
-                <!-- Descripción -->
-                <div class="mt-6">
-                    <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">Descripción Detallada</label>
-                    <textarea name="descripcion" id="descripcion" rows="4" 
-                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('descripcion') border-red-500 @enderror">{{ old('descripcion', $patogeno->descripcion) }}</textarea>
-                    @error('descripcion')
-                        <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Gestión de Imagen -->
-                <div class="mt-6 border-t pt-6">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Imagen Actual</h2>
-                    <div class="flex items-center space-x-6">
-                        @if ($patogeno->image_url)
-                            <div class="flex-shrink-0">
-                                <img src="{{ $patogeno->image_url }}" alt="Imagen actual" class="h-24 w-24 object-cover rounded-lg border border-gray-200 shadow-md">
-                            </div>
-                        @else
-                            <span class="text-gray-500">No hay imagen subida.</span>
-                        @endif
-                        
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Columna Izquierda: Datos Principales --}}
                         <div>
-                            <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Cambiar Imagen (URL)</label>
-                            <input type="url" name="image_url" id="image_url" 
-                                   value="{{ old('image_url', $patogeno->image_url) }}" 
-                                   class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 md:w-96 @error('image_url') border-red-500 @enderror">
-                            @error('image_url')
-                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">{{ __('Información Básica') }}</h3>
+
+                            {{-- Campo Nombre --}}
+                            <div class="mb-4">
+                                <x-input-label for="nombre" :value="__('Nombre Científico / Identificador')" />
+                                <x-text-input 
+                                    id="nombre" 
+                                    name="nombre" 
+                                    type="text" 
+                                    class="mt-1 block w-full" 
+                                    :value="old('nombre', $patogeno->nombre)" {{-- Rellenado de datos --}}
+                                    required autofocus autocomplete="nombre" 
+                                />
+                                <x-input-error class="mt-2" :messages="$errors->get('nombre')" />
+                            </div>
+
+                            {{-- CAMPO TIPO (Relación 1:N) --}}
+                            <div class="mb-4">
+                                <x-input-label for="tipo_patogeno_id" :value="__('Tipo de Patógeno')" />
+                                {{-- NOTA: Asumiendo que $tipos viene del controlador --}}
+                                <select id="tipo_patogeno_id" name="tipo_patogeno_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" required>
+                                    <option value="">{{ __('Seleccione un tipo') }}</option>
+                                    @foreach($tipos as $tipo)
+                                        <option 
+                                            value="{{ $tipo->id }}" 
+                                            {{ old('tipo_patogeno_id', $patogeno->tipo_patogeno_id) == $tipo->id ? 'selected' : '' }} {{-- Rellenado de datos --}}
+                                        >
+                                            {{ $tipo->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('tipo_patogeno_id')" />
+                            </div>
+
+                            {{-- Campo Fuente (Relación 1:N Opcional) --}}
+                            <div class="mb-4">
+                                <x-input-label for="fuente_id" :value="__('Fuente Principal de Referencia')" />
+                                {{-- NOTA: Asumiendo que $fuentes viene del controlador --}}
+                                <select id="fuente_id" name="fuente_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
+                                    <option value="">{{ __('Seleccione una fuente (Opcional)') }}</option>
+                                    @foreach($fuentes as $fuente)
+                                        <option 
+                                            value="{{ $fuente->id }}" 
+                                            {{ old('fuente_id', $patogeno->fuente_id) == $fuente->id ? 'selected' : '' }} {{-- Rellenado de datos --}}
+                                        >
+                                            {{ $fuente->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('fuente_id')" />
+                            </div>
+                        </div>
+
+                        {{-- Columna Derecha: Imagen y Descripción --}}
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">{{ __('Detalles y Archivos') }}</h3>
+
+                            {{-- Campo Imagen con PREVISUALIZACIÓN Alpine.js (Mejorado para edición) --}}
+                            {{-- Inicializamos Alpine con la URL existente si está disponible --}}
+                            <div class="mb-4" x-data="{ 
+                                imageUrl: '{{ $patogeno->image_url ?? '' }}',
+                                fileChange(event) { 
+                                    const file = event.target.files[0]; 
+                                    if (file) { 
+                                        const reader = new FileReader(); 
+                                        reader.onload = (e) => { this.imageUrl = e.target.result; }; 
+                                        reader.readAsDataURL(file); 
+                                    } else { 
+                                        // Si el usuario cancela la selección, volvemos a la imagen original o la borramos
+                                        this.imageUrl = '{{ $patogeno->image_url ?? '' }}';
+                                    } 
+                                } 
+                            }">
+                                <x-input-label for="image_url" :value="__('Imagen Actualizar (JPG/PNG)')" />
+                                
+                                {{-- Contenedor de Previsualización --}}
+                                <div x-show="imageUrl" class="mt-2 mb-4 p-2 border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center h-40 w-full overflow-hidden">
+                                    <img x-bind:src="imageUrl" alt="Vista previa de la imagen" class="max-h-full max-w-full object-contain rounded">
+                                </div>
+                                
+                                {{-- Input de Archivo --}}
+                                <input 
+                                    id="image_url" 
+                                    name="image_url" 
+                                    type="file" 
+                                    class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                    @change="fileChange($event)"
+                                />
+                                <x-input-error class="mt-2" :messages="$errors->get('image_url')" />
+                                @if($patogeno->image_url)
+                                    <p class="text-xs text-gray-500 mt-1">{{ __('Dejar vacío para mantener la imagen actual.') }}</p>
+                                @endif
+                            </div>
+
+                            {{-- Campo Descripción --}}
+                            <div class="mb-4">
+                                <x-input-label for="descripcion" :value="__('Descripción Detallada')" />
+                                <textarea id="descripcion" name="descripcion" rows="5" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" required>{{ old('descripcion', $patogeno->descripcion) }}</textarea> {{-- Rellenado de datos --}}
+                                <x-input-error class="mt-2" :messages="$errors->get('descripcion')" />
+                            </div>
+
+                            {{-- Campo Is Active --}}
+                            <div class="flex items-center">
+                                {{-- Rellenado de datos (usamos la columna de DB si no hay old) --}}
+                                <input 
+                                    id="is_active" 
+                                    name="is_active" 
+                                    type="checkbox" 
+                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" 
+                                    value="1" 
+                                    {{ old('is_active', $patogeno->is_active) ? 'checked' : '' }}
+                                >
+                                <x-input-label for="is_active" :value="__('Activo (Visible en la Guía)')" class="ml-2" />
+                                <x-input-error class="mt-2" :messages="$errors->get('is_active')" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Sección de Relaciones Muchos-a-Muchos -->
-                <div class="mt-8 border-t pt-6">
-                    <h2 class="text-2xl font-semibold border-b pb-2 mb-4 text-gray-700">Relaciones (Síntomas y Tratamientos)</h2>
+                    {{---
+                    ### Sección de Relaciones Muchos-a-Muchos
+                    ---}}
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">{{ __('Relaciones: Síntomas y Tratamientos') }}</h3>
 
-                    <!-- Tratamientos -->
-                    <div class="mb-6">
-                        <label for="tratamientos" class="block text-sm font-medium text-gray-700 mb-1">Tratamientos Asociados (Selección Múltiple)</label>
-                        <select name="tratamientos[]" id="tratamientos" multiple size="8" 
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('tratamientos') border-red-500 @enderror">
-                            @php
-                                // Obtener los IDs de los tratamientos actuales para precargar
-                                $patogenoTratamientoIds = $patogeno->tratamientos->pluck('id')->toArray();
-                                $selectedTratamientos = old('tratamientos') ?: $patogenoTratamientoIds;
-                            @endphp
-                            
-                            @foreach ($tratamientos as $tratamiento)
-                                <option value="{{ $tratamiento->id }}" 
-                                        {{ in_array($tratamiento->id, $selectedTratamientos) ? 'selected' : '' }}>
-                                    {{ $tratamiento->nombre }} ({{ $tratamiento->tipo->nombre ?? 'Sin Tipo' }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('tratamientos')
-                            <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Mantenga presionada la tecla Ctrl/Cmd para seleccionar múltiples opciones.</p>
+                        {{-- Preparamos los arrays de IDs asociados al patógeno para la lógica de selección --}}
+                        @php
+                            $associatedSintomaIds = $patogeno->sintomas->pluck('id')->toArray();
+                            $associatedTratamientoIds = $patogeno->tratamientos->pluck('id')->toArray();
+                        @endphp
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- Seleccionar Síntomas --}}
+                            <div>
+                                <x-input-label for="sintomas" :value="__('Síntomas Asociados')" />
+                                {{-- NOTA: Asumiendo que $sintomas viene del controlador --}}
+                                <select id="sintomas" name="sintomas[]" multiple class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full h-48">
+                                    @foreach($sintomas as $sintoma)
+                                        <option 
+                                            value="{{ $sintoma->id }}" 
+                                            {{-- Lógica clave: Selecciona si está en old() O si está asociado actualmente --}}
+                                            {{ in_array($sintoma->id, old('sintomas', $associatedSintomaIds)) ? 'selected' : '' }}
+                                        >
+                                            {{ $sintoma->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('sintomas')" />
+                                <p class="text-xs text-gray-500 mt-1">{{ __('Mantén pulsado Ctrl/Cmd para seleccionar múltiples.') }}</p>
+                            </div>
+
+                            {{-- Seleccionar Tratamientos --}}
+                            <div>
+                                <x-input-label for="tratamientos" :value="__('Tratamientos Aplicables')" />
+                                {{-- NOTA: Asumiendo que $tratamientos viene del controlador --}}
+                                <select id="tratamientos" name="tratamientos[]" multiple class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full h-48">
+                                    @foreach($tratamientos as $tratamiento)
+                                        <option 
+                                            value="{{ $tratamiento->id }}" 
+                                            {{-- Lógica clave: Selecciona si está en old() O si está asociado actualmente --}}
+                                            {{ in_array($tratamiento->id, old('tratamientos', $associatedTratamientoIds)) ? 'selected' : '' }}
+                                        >
+                                            {{ $tratamiento->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error class="mt-2" :messages="$errors->get('tratamientos')" />
+                                <p class="text-xs text-gray-500 mt-1">{{ __('Mantén pulsado Ctrl/Cmd para seleccionar múltiples.') }}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Síntomas -->
-                    <div class="mb-6">
-                        <label for="sintomas" class="block text-sm font-medium text-gray-700 mb-1">Síntomas que Causa (Selección Múltiple)</label>
-                        <select name="sintomas[]" id="sintomas" multiple size="8" 
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 @error('sintomas') border-red-500 @enderror">
-                            @php
-                                // Obtener los IDs de los síntomas actuales para precargar
-                                $patogenoSintomaIds = $patogeno->sintomas->pluck('id')->toArray();
-                                $selectedSintomas = old('sintomas') ?: $patogenoSintomaIds;
-                            @endphp
-                            
-                            @foreach ($sintomas as $sintoma)
-                                <option value="{{ $sintoma->id }}" 
-                                        {{ in_array($sintoma->id, $selectedSintomas) ? 'selected' : '' }}>
-                                    {{ $sintoma->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('sintomas')
-                            <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Mantenga presionada la tecla Ctrl/Cmd para seleccionar múltiples opciones.</p>
+                    {{-- Botón de Guardar --}}
+                    <div class="flex justify-end pt-6 border-t border-gray-200">
+                        <x-primary-button>
+                            {{ __('Actualizar Patógeno') }}
+                        </x-primary-button>
                     </div>
-                </div>
+                </form>
 
-                <!-- Botón de Envío -->
-                <div class="mt-8 border-t pt-6 flex justify-end">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-xl transition duration-300 transform hover:scale-105">
-                        <i class="fas fa-save mr-2"></i> Actualizar Patógeno
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-@endsection
+</x-app-layout>

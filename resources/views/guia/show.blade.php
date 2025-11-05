@@ -99,15 +99,18 @@
                     <!-- SECCIÓN 4: Fuente de Información -->
                     <div class="border-l-4 border-yellow-500 pl-4 pt-4">
                         <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('Fuente de Información') }}</h2>
-                        {{-- CRÍTICO: Recorremos la relación 'fuente' --}}
-                        @if ($patogeno->fuente->count() > 0)
+                        {{-- Relación belongsTo: puede ser null o un solo registro --}}
+                        @if ($patogeno->fuente)
                             <dl class="space-y-3 text-gray-700">
-                                @foreach($patogeno->fuente as $fuente)
-                                    <div>
-                                        <dt class="font-medium text-gray-500">{{ $fuente->nombre }}</dt>
-                                        <dd class="text-lg"><a href="{{ $fuente->url }}" target="_blank" class="text-indigo-500 hover:text-indigo-700 break-words">{{ $fuente->url }}</a></dd>
-                                    </div>
-                                @endforeach
+                                <div>
+                                    <dt class="font-medium text-gray-500">{{ $patogeno->fuente->nombre }}</dt>
+                                    @if ($patogeno->fuente->url)
+                                        <dd class="text-lg"><a href="{{ $patogeno->fuente->url }}" target="_blank" class="text-indigo-500 hover:text-indigo-700 break-words">{{ $patogeno->fuente->url }}</a></dd>
+                                    @endif
+                                    @if ($patogeno->fuente->descripcion)
+                                        <dd class="text-sm text-gray-600">{{ $patogeno->fuente->descripcion }}</dd>
+                                    @endif
+                                </div>
                             </dl>
                         @else
                             <p class="text-gray-500">No hay fuentes de referencia registradas.</p>

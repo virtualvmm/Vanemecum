@@ -24,11 +24,11 @@ return [
     |
     | Aquí se define el campo que se utilizará como "nombre de usuario" para el
     | proceso de inicio de sesión.
-    | CRÍTICO: Lo cambiamos de 'email' a 'correo' para que coincida con tu base de datos.
+    | Campo de nombre de usuario utilizado para iniciar sesión.
     |
     */
 
-    'username' => 'correo',
+    'username' => 'email',
 
     /*
     |--------------------------------------------------------------------------

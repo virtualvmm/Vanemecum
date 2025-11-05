@@ -24,18 +24,28 @@ class Patogeno extends Model
         'nombre',
         'descripcion',
         'tipo_patogeno_id', // Clave foránea al tipo
+        // --- CAMPOS ADICIONALES AÑADIDOS PARA SINCRONIZAR CON EL FORMULARIO ---
+        'image_url',       // Para guardar la ruta de la imagen subida
+        'is_active',       // Checkbox de estado activo/inactivo
+        'fuente_id',       // Clave foránea 1:N a la fuente de referencia (Opcional)
+        // ----------------------------------------------------------------------
     ];
 
+    /**
+     * Define la conversión de tipos (casting) para asegurar la consistencia.
+     */
+    protected $casts = [
+        'is_active' => 'boolean', // Es fundamental para los checkboxes
+    ];
+
+
     /* ----------------------------------------------------------------------
-     * RELACIONES N:1
+     * RELACIONES N:1 (Pertenece a)
      * ----------------------------------------------------------------------
      */
 
     /**
      * Relación N:1: Un Patogeno pertenece a un único TipoPatogeno (Virus, Bacteria, Hongo).
-     * Esta es la relación inversa a la HasMany definida en TipoPatogeno.php.
-     *
-     * @return BelongsTo
      */
     public function tipo(): BelongsTo
     {
@@ -43,30 +53,43 @@ class Patogeno extends Model
         return $this->belongsTo(TipoPatogeno::class, 'tipo_patogeno_id');
     }
 
+    /**
+     * Relación N:1: Un Patogeno pertenece a una Fuente de Referencia (opcional).
+     * Nota: Asume que tienes un modelo llamado 'Fuente'.
+     *
+     * @return BelongsTo
+     */
+    public function fuente(): BelongsTo
+    {
+        // Asume que la clave foránea es 'fuente_id' en esta tabla.
+        return $this->belongsTo(Fuente::class, 'fuente_id');
+    }
+
+
     /* ----------------------------------------------------------------------
      * RELACIONES N:M (Muchos a Muchos)
      * ----------------------------------------------------------------------
      */
 
     /**
-     * Relación N:M: Un Patogeno tiene muchos Sintomas, y un Sintoma se relaciona con muchos Patogenos.
+     * Relación N:M: Un Patogeno tiene muchos Sintomas.
      *
      * @return BelongsToMany
      */
     public function sintomas(): BelongsToMany
     {
-        // El segundo argumento es la tabla pivote que definimos en la migración.
+        // Usa la tabla pivote que definiste en la migración.
         return $this->belongsToMany(Sintoma::class, 'patogeno_sintoma');
     }
 
     /**
-     * Relación N:M: Un Patogeno tiene muchos Tratamientos, y un Tratamiento se relaciona con muchos Patogenos.
+     * Relación N:M: Un Patogeno tiene muchos Tratamientos.
      *
      * @return BelongsToMany
      */
     public function tratamientos(): BelongsToMany
     {
-        // El segundo argumento es la tabla pivote que definimos en la migración.
+        // Usa la tabla pivote que definiste en la migración.
         return $this->belongsToMany(Tratamiento::class, 'patogeno_tratamiento');
     }
 }
