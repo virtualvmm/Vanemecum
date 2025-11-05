@@ -40,37 +40,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ---------------------------------------------------------------------
-    // RUTAS DEL MÓDULO MICRO-DB (PATOGENOS) - CRUD COMPLETO
+    // RUTAS DEL MÓDULO MICRO-DB (PATOGENOS) - CRUD COMPLETO (SOLO ADMIN)
     // ---------------------------------------------------------------------
+    Route::middleware('is_admin')->group(function () {
+        // 1. Índice de Patógenos (GET: /micros-db)
+        Route::get('/micros-db', [PatogenoController::class, 'index'])->name('patogenos.index');
 
-    // 1. Índice de Patógenos (GET: /micros-db)
-    Route::get('/micros-db', [PatogenoController::class, 'index'])->name('patogenos.index');
+        // 2. Formulario de Creación (GET: /micros-db/create)
+        Route::get('/micros-db/create', [PatogenoController::class, 'create'])->name('patogenos.create');
 
-    // 2. Formulario de Creación (GET: /micros-db/create)
-    Route::get('/micros-db/create', [PatogenoController::class, 'create'])->name('patogenos.create');
+        // 3. Almacenar Patógeno (POST: /micros-db)
+        Route::post('/micros-db', [PatogenoController::class, 'store'])->name('patogenos.store');
 
-    // 3. Almacenar Patógeno (POST: /micros-db)
-    Route::post('/micros-db', [PatogenoController::class, 'store'])->name('patogenos.store');
+        // 4. Vista de detalle de un Patógeno (GET: /micros-db/{patogeno})
+        Route::get('/micros-db/{patogeno}', [PatogenoController::class, 'show'])->name('patogenos.show');
+        
+        // 5. Formulario de Edición (GET: /micros-db/{patogeno}/edit)
+        Route::get('/micros-db/{patogeno}/edit', [PatogenoController::class, 'edit'])->name('patogenos.edit');
 
-    // 4. Vista de detalle de un Patógeno (GET: /micros-db/{patogeno})
-    Route::get('/micros-db/{patogeno}', [PatogenoController::class, 'show'])->name('patogenos.show');
-    
-    // 5. Formulario de Edición (GET: /micros-db/{patogeno}/edit)
-    Route::get('/micros-db/{patogeno}/edit', [PatogenoController::class, 'edit'])->name('patogenos.edit');
-
-    // 6. Actualizar Patógeno (PUT/PATCH: /micros-db/{patogeno})
-    Route::patch('/micros-db/{patogeno}', [PatogenoController::class, 'update'])->name('patogenos.update');
-    
-    // 7. Eliminar Patógeno (DELETE: /micros-db/{patogeno})
-    Route::delete('/micros-db/{patogeno}', [PatogenoController::class, 'destroy'])->name('patogenos.destroy');
+        // 6. Actualizar Patógeno (PUT/PATCH: /micros-db/{patogeno})
+        Route::patch('/micros-db/{patogeno}', [PatogenoController::class, 'update'])->name('patogenos.update');
+        
+        // 7. Eliminar Patógeno (DELETE: /micros-db/{patogeno})
+        Route::delete('/micros-db/{patogeno}', [PatogenoController::class, 'destroy'])->name('patogenos.destroy');
+    });
 
 
     // ---------------------------------------------------------------------
     // RUTAS DEL MÓDULO AUXILIAR: SÍNTOMAS (CRUD)
     // ---------------------------------------------------------------------
     
-    // Usamos Route::resource para simplificar la creación de las 7 rutas del CRUD
-    Route::resource('admin/sintomas', SintomaController::class)->names('admin.sintomas');
+    // Usamos Route::resource para simplificar la creación de las 7 rutas del CRUD (SOLO ADMIN)
+    Route::middleware('is_admin')->group(function () {
+        Route::resource('admin/sintomas', SintomaController::class)->names('admin.sintomas');
+    });
     // Nota: El prefijo de URL es /admin/sintomas
     // Las rutas generadas son: admin.sintomas.index, admin.sintomas.create, admin.sintomas.store, etc.
 
@@ -78,12 +81,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------------------------
     // RUTAS ADICIONALES PARA EL MENÚ 
     // ---------------------------------------------------------------------
-    // Tratamientos: definimos recurso completo (index, create, store, show, edit, update, destroy)
-    Route::resource('tratamientos', TratamientoController::class)->names('tratamientos');
+    // Tratamientos: index y show públicos; resto solo admin
+    Route::get('/tratamientos', [TratamientoController::class, 'index'])->name('tratamientos.index');
+    Route::get('/tratamientos/{tratamiento}', [TratamientoController::class, 'show'])->name('tratamientos.show');
+    Route::middleware('is_admin')->group(function () {
+        Route::get('/tratamientos/create', [TratamientoController::class, 'create'])->name('tratamientos.create');
+        Route::post('/tratamientos', [TratamientoController::class, 'store'])->name('tratamientos.store');
+        Route::get('/tratamientos/{tratamiento}/edit', [TratamientoController::class, 'edit'])->name('tratamientos.edit');
+        Route::put('/tratamientos/{tratamiento}', [TratamientoController::class, 'update'])->name('tratamientos.update');
+        Route::delete('/tratamientos/{tratamiento}', [TratamientoController::class, 'destroy'])->name('tratamientos.destroy');
+    });
 
     // Guía: índice y detalle
     Route::get('/guia', [GuiaController::class, 'index'])->name('guia.index');
     Route::get('/guia/{patogeno}', [GuiaController::class, 'show'])->name('guia.show');
+    // Catálogo público completo
+    Route::get('/catalogo', [GuiaController::class, 'catalogo'])->name('catalogo.index');
 });
 
 // Incluye las rutas de autenticación (login, register, etc.)

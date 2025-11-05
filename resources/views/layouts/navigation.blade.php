@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block h-14 w-auto" />
                     </a>
                 </div>
 
@@ -17,9 +17,11 @@
                     </x-nav-link>
 
                     {{-- AÑADIMOS ESTOS ENLACES CLAVE --}}
-                    <x-nav-link :href="route('patogenos.index')" :active="request()->routeIs('patogenos.*')">
-                        {{ __('Micro-DB (Patógenos)') }}
-                    </x-nav-link>
+                    @admin
+                        <x-nav-link :href="route('patogenos.index')" :active="request()->routeIs('patogenos.*')">
+                            {{ __('Micro-DB (Patógenos)') }}
+                        </x-nav-link>
+                    @endadmin
                     <x-nav-link :href="route('tratamientos.index')" :active="request()->routeIs('tratamientos.index')">
                         {{ __('Tratamientos') }}
                     </x-nav-link>
@@ -83,9 +85,11 @@
             </x-responsive-nav-link>
 
              {{-- AÑADIMOS ESTOS ENLACES CLAVE --}}
+            @admin
             <x-responsive-nav-link :href="route('patogenos.index')" :active="request()->routeIs('patogenos.*')">
                 {{ __('Micro-DB (Patógenos)') }}
             </x-responsive-nav-link>
+            @endadmin
             <x-responsive-nav-link :href="route('tratamientos.index')" :active="request()->routeIs('tratamientos.index')">
                 {{ __('Tratamientos') }}
             </x-responsive-nav-link>

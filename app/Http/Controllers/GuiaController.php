@@ -16,28 +16,21 @@ class GuiaController extends Controller
      */
     public function index(Request $request)
     {
-        // Obtener el término de búsqueda de la URL (si existe)
         $query = $request->input('query');
 
-        // Iniciar la consulta al modelo Patogeno, cargando la relación 'tipo'
-        // Esto es necesario para mostrar el Tipo de Patógeno en la lista (ej: Virus, Bacteria)
-        $patogenos = Patogeno::with('tipo');
+        $base = Patogeno::with('tipo')
+            ->when($query, function ($q) use ($query) {
+                $q->where('nombre', 'LIKE', "%{$query}%");
+            })
+            ->orderBy('nombre');
 
-        // Aplicar filtro de búsqueda si existe un término
-        if ($query) {
-            // CRÍTICO: Usamos la columna 'nombre' que sí existe en tu tabla 'patogenos'.
-            $patogenos = $patogenos->where('nombre', 'LIKE', "%{$query}%");
-        }
+        // Cargar colecciones por tipo (para carrusel estilo Netflix)
+        $virus = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Virus'))->get();
+        $bacterias = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Bacteria'))->get();
+        $hongos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Hongo'))->get();
+        $parasitos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Parásito'))->get();
 
-        // Obtener los patógenos paginados para no sobrecargar la vista.
-        // CRÍTICO: Usamos la columna 'nombre' para ordenar.
-        $patogenos = $patogenos->orderBy('nombre')->paginate(10);
-
-        // Devolver la vista principal de la guía, pasando los patógenos y el término de búsqueda.
-        return view('guia.index', [
-            'patogenos' => $patogenos,
-            'query' => $query,
-        ]);
+        return view('guia.index', compact('virus', 'bacterias', 'hongos', 'parasitos', 'query'));
     }
 
 
@@ -58,5 +51,19 @@ class GuiaController extends Controller
         return view('guia.show', [
             'patogeno' => $patogeno,
         ]);
+    }
+
+    /**
+     * Catálogo público de todos los patógenos en cuadrícula.
+     */
+    public function catalogo(Request $request)
+    {
+        $query = $request->input('query');
+        $patogenos = Patogeno::with('tipo')
+            ->when($query, fn($q) => $q->where('nombre', 'LIKE', "%{$query}%"))
+            ->orderBy('nombre')
+            ->paginate(18);
+
+        return view('guia.catalog', compact('patogenos', 'query'));
     }
 }

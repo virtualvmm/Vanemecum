@@ -4,13 +4,15 @@
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Administración de Tratamientos</h1>
-                <!-- Botón de Crear -->
+                <!-- Botón de Crear (solo Admin) -->
+                @admin
                 <a href="{{ route('tratamientos.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out shadow-md flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
                     Crear Nuevo Tratamiento
                 </a>
+                @endadmin
             </div>
 
             <!-- Mensajes de Estado (Éxito) -->
@@ -77,19 +79,20 @@
                                     {{ Str::limit($tratamiento->descripcion, 50) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                    <!-- Botón Editar -->
-                                    <a href="{{ route('tratamientos.edit', $tratamiento->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                        Editar
-                                    </a>
-                                    
-                                    <!-- Botón Eliminar (Formulario) -->
-                                    <form action="{{ route('tratamientos.destroy', $tratamiento->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tratamiento? Esta acción es irreversible.');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900 ml-2">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                    @admin
+                                        <!-- Botón Editar -->
+                                        <a href="{{ route('tratamientos.edit', $tratamiento->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                            Editar
+                                        </a>
+                                        <!-- Botón Eliminar (Formulario) -->
+                                        <form action="{{ route('tratamientos.destroy', $tratamiento->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tratamiento? Esta acción es irreversible.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-2">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    @endadmin
                                 </td>
                             </tr>
                         @empty

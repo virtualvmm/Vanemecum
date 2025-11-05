@@ -19,9 +19,11 @@
                 {{-- Header y Botón de Creación --}}
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h3 class="text-2xl font-bold text-gray-700">{{ __('Lista de Patógenos') }}</h3>
-                    <a href="{{ route('patogenos.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 shadow-md flex-shrink-0">
-                        {{ __('Crear Nuevo Patógeno') }}
-                    </a>
+                    @admin
+                        <a href="{{ route('patogenos.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-300 shadow-md flex-shrink-0">
+                            {{ __('Crear Nuevo Patógeno') }}
+                        </a>
+                    @endadmin
                 </div>
 
                 {{-- Búsqueda --}}
@@ -97,20 +99,21 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center justify-end space-x-3">
-                                            {{-- Botón Editar --}}
-                                            <a href="{{ route('patogenos.edit', $patogeno) }}" class="text-indigo-600 hover:text-indigo-900 transition duration-150">
-                                                {{ __('Editar') }}
-                                            </a>
+                                            @admin
+                                                {{-- Botón Editar --}}
+                                                <a href="{{ route('patogenos.edit', $patogeno) }}" class="text-indigo-600 hover:text-indigo-900 transition duration-150">
+                                                    {{ __('Editar') }}
+                                                </a>
 
-                                            {{-- Botón Eliminar (ahora abre el modal) --}}
-                                            <button 
-                                                type="button" 
-                                                @click="openDeleteModal = true; deleteUrl = '{{ route('patogenos.destroy', $patogeno) }}'"
-                                                class="text-red-600 hover:text-red-900 transition duration-150"
-                                            >
-                                                {{ __('Eliminar') }}
-                                            </button>
-
+                                                {{-- Botón Eliminar (ahora abre el modal) --}}
+                                                <button 
+                                                    type="button" 
+                                                    @click="openDeleteModal = true; deleteUrl = '{{ route('patogenos.destroy', $patogeno) }}'"
+                                                    class="text-red-600 hover:text-red-900 transition duration-150"
+                                                >
+                                                    {{ __('Eliminar') }}
+                                                </button>
+                                            @endadmin
                                         </td>
                                     </tr>
                                 @empty
