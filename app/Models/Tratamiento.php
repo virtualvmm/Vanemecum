@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tratamiento extends Model
 {
@@ -18,9 +19,11 @@ class Tratamiento extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
-        'dosis_o_metodo', // Puede ser una dosis de medicamento o un procedimiento
+        // Opcionales/extendidos (pueden no existir en DB, se ignoran si no están)
+        'dosis_o_metodo',
         'duracion_estimada',
         'efectividad_porcentaje',
+        'tipo_id',
     ];
 
     /**
@@ -31,5 +34,13 @@ class Tratamiento extends Model
     {
         // La tabla pivote por defecto es 'patogeno_tratamiento', que es correcta para este caso.
         return $this->belongsToMany(Patogeno::class, 'patogeno_tratamiento');
+    }
+
+    /**
+     * Relación N:1 con TipoTratamiento (nullable).
+     */
+    public function tipo(): BelongsTo
+    {
+        return $this->belongsTo(TipoTratamiento::class, 'tipo_id');
     }
 }

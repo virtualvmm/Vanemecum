@@ -10,30 +10,19 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany; // Para la relación con Contacto
-use Illuminate\Database\Eloquent\SoftDeletes; // Para el borrado suave
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes;
-
-    // CRÍTICO: Sobreescribe el nombre de la tabla por defecto (de 'users' a 'usuarios')
-    protected $table = 'usuarios';
-
-    // CRÍTICO: Indica a Laravel y Fortify que la columna de email/login se llama 'correo'
-    public const EMAIL = 'correo';
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * Los atributos que son asignables en masa.
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombre',
-        'apellidos',
-        'dni',
-        'fecha_nacimiento',
-        'correo', // Columna personalizada para el email
+        'name',
+        'email',
         'password',
-        'is_active',
     ];
 
     /**
@@ -54,8 +43,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'correo_verified_at' => 'datetime',
-        'fecha_nacimiento' => 'date',
+        'email_verified_at' => 'datetime',
     ];
 
     /* -------------------------------------------------------------------------- */
@@ -63,12 +51,12 @@ class User extends Authenticatable
     /* -------------------------------------------------------------------------- */
 
     /**
-     * Relación Muchos a Muchos con Roles (Tabla Pivote: user_rol)
+     * Relación Muchos a Muchos con Roles (Tabla Pivote: role_user)
      */
     public function roles(): BelongsToMany
     {
         // Usa el modelo singular Rol
-        return $this->belongsToMany(Rol::class, 'user_rol', 'user_id', 'rol_id');
+        return $this->belongsToMany(Rol::class, 'role_user', 'user_id', 'role_id');
     }
 
     /**
@@ -109,6 +97,6 @@ class User extends Authenticatable
      */
     public function getEmailForPasswordReset(): string
     {
-        return $this->correo;
+        return $this->email;
     }
 }

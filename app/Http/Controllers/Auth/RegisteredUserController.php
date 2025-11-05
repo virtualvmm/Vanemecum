@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Rol;
 
 class RegisteredUserController extends Controller
 {
@@ -41,6 +42,16 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Asignar rol por defecto: si no hay usuarios, será Admin; si no, Usuario
+        $adminRole = Rol::firstOrCreate(['nombre' => 'Admin'], ['descripcion' => 'Administrador del sistema']);
+        $userRole = Rol::firstOrCreate(['nombre' => 'Usuario'], ['descripcion' => 'Usuario estándar']);
+
+        if (User::count() === 1) {
+            $user->roles()->attach($adminRole->id);
+        } else {
+            $user->roles()->attach($userRole->id);
+        }
 
         event(new Registered($user));
 

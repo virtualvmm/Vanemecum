@@ -6,6 +6,9 @@ use App\Models\Patogeno;
 use App\Models\TipoPatogeno;
 use App\Models\Tratamiento;
 use App\Models\Sintoma;
+use App\Models\Fuente;
+use App\Http\Requests\StorePatogenoRequest;
+use App\Http\Requests\UpdatePatogenoRequest; // Usamos el Request dedicado
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -13,26 +16,27 @@ use Illuminate\Validation\Rule;
 /**
  * PatogenoController
  * Controlador para la administración CRUD (Crear, Leer, Actualizar, Eliminar)
- * de Patógenos. Protegido por autenticación.
+ * de Patógenos.
+ *
+ * NOTA PROFESIONAL: Se recomienda implementar una PatogenoPolicy para gestionar
+ * la autorización de roles (Admin vs. User) en cada método.
  */
 class PatogenoController extends Controller
 {
     /**
      * Muestra el listado de patógenos para la administración.
      * Incluye búsqueda y paginación.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::viewAny)
         $query = $request->input('query');
 
-        $patogenos = Patogeno::with('tipo');
+        // Cargamos las relaciones tipo y fuente para mostrarlas en la tabla.
+        $patogenos = Patogeno::with(['tipo', 'fuente']);
 
         // Aplicar filtro de búsqueda si existe un término
         if ($query) {
-            // Buscamos solo por la columna 'nombre', que es la que existe.
             $patogenos->where('nombre', 'LIKE', "%{$query}%");
         }
 
@@ -47,178 +51,171 @@ class PatogenoController extends Controller
 
     /**
      * Muestra el formulario para crear un nuevo patógeno.
-     * Carga las relaciones (TipoPatogeno, Tratamiento, Sintoma) para los selectores.
-     *
-     * @return \Illuminate\View\View
+     * Carga las relaciones (TipoPatogeno, Fuente, Tratamiento, Sintoma) para los selectores.
      */
     public function create()
     {
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::create)
+        
         // Cargamos todas las opciones necesarias para los selectores del formulario.
         $tipos = TipoPatogeno::orderBy('nombre')->get();
         $tratamientos = Tratamiento::orderBy('nombre')->get();
         $sintomas = Sintoma::orderBy('nombre')->get();
+        $fuentes = Fuente::orderBy('nombre')->get();
 
         return view('patogenos.create', [
             'tipos' => $tipos,
             'tratamientos' => $tratamientos,
             'sintomas' => $sintomas,
+            'fuentes' => $fuentes,
         ]);
     }
 
     /**
      * Almacena un nuevo patógeno en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Usamos el Form Request dedicado para la validación.
      */
-    public function store(Request $request)
+    public function store(StorePatogenoRequest $request)
     {
-        $request->validate([
-            'nombre' => ['required', 'string', 'max:150', 'unique:patogenos,nombre'],
-            'tipo_id' => ['required', 'exists:tipo_patogenos,id'],
-            'descripcion' => ['nullable', 'string'],
-            'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Para subir archivos
-            'is_active' => ['boolean'],
-            'tratamientos' => ['nullable', 'array'],
-            'tratamientos.*' => ['exists:tratamientos,id'],
-            'sintomas' => ['nullable', 'array'],
-            'sintomas.*' => ['exists:sintomas,id'],
-            // Las fuentes no se gestionan desde aquí, solo se asigna la 'fuente_id'.
-            // Asumimos que la fuente se asigna manualmente o es nullable.
-        ]);
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::create)
 
-        $imageUrl = null;
-        // 1. Manejo de la subida de imagen (si existe)
-        if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('patogenos', 'public');
-            $imageUrl = Storage::url($path);
+        // 1. Validar los datos y obtener el array limpio
+        $data = $request->validated();
+
+        // 2. Manejo de la subida de imagen (si existe)
+        $data['image_url'] = null;
+        if ($request->hasFile('image_url')) {
+            $path = $request->file('image_url')->store('patogenos', 'public');
+            // Almacenamos la URL pública
+            $data['image_url'] = Storage::url($path);
         }
 
-        // 2. Crear el Patógeno
+        // 3. Normalizar el checkbox is_active
+        // Si el checkbox no se envía, su valor es false.
+        $data['is_active'] = $request->boolean('is_active');
+
+        // 4. Crear el Patógeno (Excluimos las relaciones M:M antes de crear)
         $patogeno = Patogeno::create([
-            'nombre' => $request->nombre,
-            'tipo_id' => $request->tipo_id,
-            'descripcion' => $request->descripcion,
-            'image_url' => $imageUrl, // Guardamos la URL de la imagen
-            'is_active' => $request->boolean('is_active'),
-            // 'fuente_id' se puede asignar aquí si viene en el request
+            'nombre'           => $data['nombre'],
+            'tipo_patogeno_id' => $data['tipo_patogeno_id'],
+            'fuente_id'        => $data['fuente_id'] ?? null,
+            'descripcion'      => $data['descripcion'],
+            'image_url'        => $data['image_url'],
+            'is_active'        => $data['is_active'],
         ]);
 
-        // 3. Sincronizar relaciones Muchos a Muchos
-        $patogeno->tratamientos()->sync($request->tratamientos);
-        $patogeno->sintomas()->sync($request->sintomas);
+        // 5. Sincronizar relaciones Muchos a Muchos
+        // El método sync() puede recibir un array vacío si no se selecciona nada.
+        $patogeno->tratamientos()->sync($data['tratamientos'] ?? []);
+        $patogeno->sintomas()->sync($data['sintomas'] ?? []);
 
         return redirect()->route('patogenos.index')->with('success', 'Patógeno creado exitosamente.');
     }
 
     /**
-     * Muestra la página de detalle de un patógeno (no es necesario en el CRUD admin, pero se mantiene).
-     *
-     * @param  \App\Models\Patogeno  $patogeno
-     * @return \Illuminate\View\View
+     * Muestra la página de detalle de un patógeno (normalmente redirige a 'edit' en admin).
      */
     public function show(Patogeno $patogeno)
     {
-        // Redirigimos al 'show' público o simplemente a 'edit' en admin
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::view)
+
+        // Redirigimos al 'edit' para la administración, cargando todas las relaciones.
         return redirect()->route('patogenos.edit', $patogeno);
     }
 
     /**
      * Muestra el formulario para editar un patógeno existente.
-     * Carga las opciones y las relaciones ya asignadas.
-     *
-     * @param  \App\Models\Patogeno  $patogeno
-     * @return \Illuminate\View\View
      */
     public function edit(Patogeno $patogeno)
     {
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::update)
+
         // Cargamos todas las opciones necesarias
         $tipos = TipoPatogeno::orderBy('nombre')->get();
         $tratamientos = Tratamiento::orderBy('nombre')->get();
         $sintomas = Sintoma::orderBy('nombre')->get();
+        $fuentes = Fuente::orderBy('nombre')->get();
 
         // Obtenemos los IDs asignados al patógeno para marcar los checkboxes/select
         $patogenoTratamientos = $patogeno->tratamientos->pluck('id')->toArray();
         $patogenoSintomas = $patogeno->sintomas->pluck('id')->toArray();
+        
+        // Obtenemos el ID de la fuente asignada
+        $patogenoFuenteId = $patogeno->fuente_id; 
 
         return view('patogenos.edit', [
             'patogeno' => $patogeno,
             'tipos' => $tipos,
             'tratamientos' => $tratamientos,
             'sintomas' => $sintomas,
+            'fuentes' => $fuentes,
             'patogenoTratamientos' => $patogenoTratamientos,
             'patogenoSintomas' => $patogenoSintomas,
+            'patogenoFuenteId' => $patogenoFuenteId,
         ]);
     }
 
     /**
      * Actualiza el patógeno en la base de datos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Patogeno  $patogeno
-     * @return \Illuminate\Http\RedirectResponse
+     * Usamos el Form Request dedicado para la validación (UpdatePatogenoRequest).
      */
-    public function update(Request $request, Patogeno $patogeno)
+    public function update(UpdatePatogenoRequest $request, Patogeno $patogeno)
     {
-        $request->validate([
-            'nombre' => ['required', 'string', 'max:150', Rule::unique('patogenos', 'nombre')->ignore($patogeno->id)],
-            'tipo_id' => ['required', 'exists:tipo_patogenos,id'],
-            'descripcion' => ['nullable', 'string'],
-            'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'is_active' => ['boolean'],
-            'tratamientos' => ['nullable', 'array'],
-            'tratamientos.*' => ['exists:tratamientos,id'],
-            'sintomas' => ['nullable', 'array'],
-            'sintomas.*' => ['exists:sintomas,id'],
-        ]);
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::update)
 
+        // 1. Obtener los datos validados del Form Request
+        $data = $request->validated();
+        
         $imageUrl = $patogeno->image_url;
 
-        // 1. Manejo de la subida de imagen
-        if ($request->hasFile('image_file')) {
-            // Eliminar imagen antigua si existe
+        // 2. Manejo de la subida de imagen
+        if ($request->hasFile('image_url')) {
+            // Eliminar imagen antigua si existe (convertir URL pública a ruta de disco)
             if ($patogeno->image_url) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $patogeno->image_url));
+                // Obtenemos la ruta relativa al disco eliminando la URL base /storage/
+                $pathToDelete = str_replace(Storage::url(''), '', $patogeno->image_url);
+                Storage::disk('public')->delete($pathToDelete);
             }
             // Subir nueva imagen
-            $path = $request->file('image_file')->store('patogenos', 'public');
+            $path = $request->file('image_url')->store('patogenos', 'public');
             $imageUrl = Storage::url($path);
         }
 
-        // 2. Actualizar el Patógeno
+        // 3. Actualizar el Patógeno
         $patogeno->update([
-            'nombre' => $request->nombre,
-            'tipo_id' => $request->tipo_id,
-            'descripcion' => $request->descripcion,
-            'image_url' => $imageUrl,
-            'is_active' => $request->boolean('is_active'),
+            'nombre'           => $data['nombre'],
+            'tipo_patogeno_id' => $data['tipo_patogeno_id'],
+            'fuente_id'        => $data['fuente_id'] ?? null,
+            'descripcion'      => $data['descripcion'],
+            'image_url'        => $imageUrl,
+            'is_active'        => $request->boolean('is_active'),
         ]);
 
-        // 3. Sincronizar relaciones Muchos a Muchos
-        $patogeno->tratamientos()->sync($request->tratamientos);
-        $patogeno->sintomas()->sync($request->sintomas);
+        // 4. Sincronizar relaciones Muchos a Muchos
+        $patogeno->tratamientos()->sync($data['tratamientos'] ?? []);
+        $patogeno->sintomas()->sync($data['sintomas'] ?? []);
 
         return redirect()->route('patogenos.index')->with('success', 'Patógeno actualizado exitosamente.');
     }
 
     /**
      * Elimina un patógeno de la base de datos.
-     *
-     * @param  \App\Models\Patogeno  $patogeno
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Patogeno $patogeno)
     {
-        // Eliminar relaciones Muchos a Muchos (Laravel lo hace automáticamente si se usa 'sync', pero es bueno ser explícito)
+        // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::delete)
+
+        // 1. Eliminar relaciones M:M 
         $patogeno->tratamientos()->detach();
         $patogeno->sintomas()->detach();
 
-        // Eliminar imagen del disco
+        // 2. Eliminar imagen del disco
         if ($patogeno->image_url) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $patogeno->image_url));
+            $pathToDelete = str_replace(Storage::url(''), '', $patogeno->image_url);
+            Storage::disk('public')->delete($pathToDelete);
         }
 
-        // Eliminar Patógeno
+        // 3. Eliminar Patógeno
         $patogeno->delete();
 
         return redirect()->route('patogenos.index')->with('success', 'Patógeno eliminado correctamente.');

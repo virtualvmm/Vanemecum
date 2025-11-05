@@ -25,7 +25,7 @@ class Rol extends Model
      */
     public function usuarios(): BelongsToMany
     {
-        // La tabla pivote es 'user_rol'. Claves: 'rol_id' y 'user_id'.
-        return $this->belongsToMany(User::class, 'user_rol', 'rol_id', 'user_id');
+        // Tabla pivote real según migración: 'role_user'
+        return $this->belongsToMany(User::class, 'role_user', 'role_id', 'user_id');
     }
 }
