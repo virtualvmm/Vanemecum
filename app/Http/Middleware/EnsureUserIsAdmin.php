@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Models\Rol;
+use App\Models\User;
+
+class EnsureUserIsAdmin
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $user = $request->user();
+        // Auto-activación del primer Admin: si no existe ningún admin en el sistema,
+        // el primer usuario autenticado que acceda obtiene el rol Admin.
+        if ($user) {
+            $adminRole = Rol::firstOrCreate(['nombre' => 'Admin'], ['descripcion' => 'Administrador del sistema']);
+            $hasAnyAdmin = User::whereHas('roles', fn($q) => $q->where('nombre', 'Admin'))->exists();
+            if (!$hasAnyAdmin) {
+                $user->roles()->syncWithoutDetaching([$adminRole->id]);
+            }
+        }
+
+        if (!$user || !$user->hasRole('Admin')) {
+            abort(403, 'Acceso restringido');
+        }
+        return $next($request);
+    }
+}
+
+

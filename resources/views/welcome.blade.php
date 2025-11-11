@@ -13,10 +13,10 @@
             background-color: #f7fafc; /* Color de fondo claro */
         }
         .hero-bg {
-            /* Un fondo sutil para dar ambiente de investigación */
-            background-image: linear-gradient(180deg, rgba(238, 242, 255, 0.9), rgba(255, 255, 255, 0.9)), url('https://placehold.co/1200x800/eef2ff/4f46e5?text=Fondo+de+Investigacion');
-            background-size: cover;
-            background-position: center;
+            background: radial-gradient(circle at 20% 20%, #eef2ff, transparent 40%),
+                        radial-gradient(circle at 80% 10%, #e0e7ff, transparent 35%),
+                        radial-gradient(circle at 50% 80%, #f5f3ff, transparent 40%),
+                        #ffffff;
         }
     </style>
 </head>
@@ -26,9 +26,10 @@
         
         <!-- Navegación Superior --><header class="p-6 bg-white shadow-md">
             <nav class="flex justify-between items-center max-w-7xl mx-auto">
-                <a href="{{ url('/') }}" class="text-2xl font-bold text-indigo-600 flex items-center">
-                    <!-- CLASES AJUSTADAS: h-16 para un tamaño más grande --><img src="{{ asset('images/logo.png') }}" alt="Vanemecum Logo" class="h-16 w-auto mr-3 object-contain" />
-                    Vanemecum </a>
+                <a href="{{ url('/') }}" class="flex items-center">
+                    <!-- Logo más grande y sin texto al lado -->
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-24 w-auto object-contain" />
+                </a>
                 
                 <div class="space-x-4">
                     @auth
@@ -67,10 +68,11 @@
                         {{ __('Ofrecemos dos niveles de acceso según sus necesidades:') }}
                     </p>
                     <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4">
-                        <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200 w-full sm:w-56 shadow-md transition duration-300 hover:shadow-lg">
+                        <a href="{{ route('login', ['email' => 'admin@example.com']) }}" class="p-4 rounded-xl bg-indigo-50 border border-indigo-200 w-full sm:w-56 shadow-md transition duration-300 hover:shadow-lg">
                             <p class="font-bold text-lg text-indigo-800">{{ __('ADMINISTRADOR') }}</p>
                             <p class="text-sm text-indigo-600">{{ __('Gestión y edición completa (CRUD).') }}</p>
-                        </div>
+                            <p class="mt-2 text-xs text-indigo-500">Email: admin@example.com · Pass: 12345678</p>
+                        </a>
                         <div class="p-4 rounded-xl bg-gray-100 border border-gray-300 w-full sm:w-56 shadow-md transition duration-300 hover:shadow-lg">
                             <p class="font-bold text-lg text-gray-700">{{ __('USUARIO') }}</p>
                             <p class="text-sm text-gray-500">{{ __('Solo acceso de lectura y consulta de datos.') }}</p>
@@ -98,6 +100,7 @@
                 </div>
 
             </div>
+            <img src="{{ asset('images/logo.png') }}" alt="Marca de agua" class="watermark h-72 w-auto">
         </main>
 
         <!-- Pie de Página --><footer class="p-4 bg-gray-800 text-center text-gray-400 text-sm">
