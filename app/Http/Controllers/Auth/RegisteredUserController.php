@@ -49,15 +49,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Asignar rol por defecto: si no hay usuarios, será Admin; si no, Usuario
-        $adminRole = Rol::firstOrCreate(['nombre' => 'Admin'], ['descripcion' => 'Administrador del sistema']);
+        // Asignar SIEMPRE rol de usuario por defecto.
         $userRole = Rol::firstOrCreate(['nombre' => 'Usuario'], ['descripcion' => 'Usuario estándar']);
-
-        if (User::count() === 1) {
-            $user->roles()->attach($adminRole->id);
-        } else {
-            $user->roles()->attach($userRole->id);
-        }
+        $user->roles()->attach($userRole->id);
 
         event(new Registered($user));
 

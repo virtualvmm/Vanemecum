@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Representa la tabla principal 'patogenos'.
@@ -91,5 +93,21 @@ class Patogeno extends Model
     {
         // Usa la tabla pivote que definiste en la migración.
         return $this->belongsToMany(Tratamiento::class, 'patogeno_tratamiento');
+    }
+
+    /**
+     * Relación 1:N con imágenes adicionales del patógeno.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(PatogenoImage::class, 'patogeno_id');
+    }
+
+    /**
+     * Imagen principal (si existe) marcada con is_primary.
+     */
+    public function primaryImage(): HasOne
+    {
+        return $this->hasOne(PatogenoImage::class, 'patogeno_id')->where('is_primary', true);
     }
 }

@@ -17,6 +17,9 @@
                     </x-nav-link>
 
                     {{-- AÑADIMOS ESTOS ENLACES CLAVE --}}
+                    <x-nav-link :href="route('catalogo.index')" :active="request()->routeIs('catalogo.index')">
+                        {{ __('Catálogo') }}
+                    </x-nav-link>
                     @admin
                         <x-nav-link :href="route('patogenos.index')" :active="request()->routeIs('patogenos.*')">
                             {{ __('Micro-DB (Patógenos)') }}

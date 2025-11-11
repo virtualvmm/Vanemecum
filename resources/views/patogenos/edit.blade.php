@@ -117,6 +117,42 @@
                                 @endif
                             </div>
 
+                            {{-- Imágenes adicionales existentes: seleccionar principal y borrar --}}
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <x-input-label :value="__('Imágenes adicionales')" class="mb-2 font-bold" />
+                                @php
+                                    $images = $patogeno->images()->get();
+                                    $primaryId = optional($patogeno->primaryImage)->id;
+                                @endphp
+                                @if($images->count())
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        @foreach($images as $img)
+                                            <div class="border rounded p-2 bg-white">
+                                                <img src="{{ $img->path }}" alt="Imagen" class="h-28 w-full object-cover rounded">
+                                                <div class="mt-2 flex items-center justify-between text-sm">
+                                                    <label class="flex items-center space-x-2">
+                                                        <input type="radio" name="primary_image_id" value="{{ $img->id }}" {{ $primaryId == $img->id ? 'checked' : '' }}>
+                                                        <span>Principal</span>
+                                                    </label>
+                                                    <label class="flex items-center space-x-2 text-red-600">
+                                                        <input type="checkbox" name="delete_image_ids[]" value="{{ $img->id }}">
+                                                        <span>Borrar</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-500">{{ __('Aún no hay imágenes adicionales.') }}</p>
+                                @endif
+
+                                <div class="mt-4">
+                                    <x-input-label for="images" :value="__('Añadir nuevas imágenes (múltiples)')" />
+                                    <input id="images" name="images[]" type="file" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" accept="image/jpeg,image/png,image/gif,image/svg+xml" />
+                                    <div id="multi-image-preview" class="mt-3 grid grid-cols-3 gap-3"></div>
+                                </div>
+                            </div>
+
                             {{-- Campo Descripción --}}
                             <div class="mb-4">
                                 <x-input-label for="descripcion" :value="__('Descripción Detallada')" />
@@ -205,4 +241,22 @@
             </div>
         </div>
     </div>
+<script>
+    document.getElementById('images')?.addEventListener('change', function(event) {
+        const container = document.getElementById('multi-image-preview');
+        if (!container) return;
+        container.innerHTML = '';
+        const files = event.target.files;
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'h-24 w-full object-cover rounded border';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
 </x-app-layout>

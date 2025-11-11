@@ -52,7 +52,7 @@
         </header>
 
         <!-- Sección Principal (Hero) --><main class="flex-grow hero-bg flex items-center justify-center p-6">
-            <div class="max-w-4xl text-center bg-white/90 backdrop-blur-sm p-10 rounded-xl shadow-2xl border border-indigo-100">
+            <div class="max-w-6xl w-full mx-auto text-center bg-white/90 backdrop-blur-sm p-12 rounded-xl shadow-2xl border border-indigo-100">
                 
                 <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-4 leading-tight">
                     {{ __('Sistema de Gestión de Patógenos y Tratamientos') }}
@@ -62,7 +62,7 @@
                     {{ __('Esta plataforma centraliza la información vital sobre agentes patógenos, sus síntomas asociados y los tratamientos recomendados. Está diseñada para administradores de bases de datos biológicas y personal de consulta.') }}
                 </p>
                 
-                <div class="mt-8 pt-4 border-t border-gray-200">
+                <div class="mt-10 pt-4 border-t border-gray-200">
                     <h2 class="text-2xl font-semibold text-indigo-700 mb-4">{{ __('Acceso y Roles') }}</h2>
                     <p class="text-md text-gray-600">
                         {{ __('Ofrecemos dos niveles de acceso según sus necesidades:') }}
@@ -80,7 +80,7 @@
                     </div>
                 </div>
 
-                <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <div class="mt-10 flex flex-col sm:flex-row justify-center gap-6">
                     @guest
                         <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform hover:scale-[1.02]">
                             {{ __('Entrar en el Sistema') }}
@@ -100,7 +100,8 @@
                 </div>
 
             </div>
-            <img src="{{ asset('images/logo.png') }}" alt="Marca de agua" class="watermark h-72 w-auto">
+            <!-- Marca de agua sutil (más grande y centrada a la derecha) -->
+            <img src="{{ asset('images/logo.png') }}" alt="Marca de agua" class="fixed right-10 bottom-10 opacity-10 h-[22rem] w-auto pointer-events-none select-none">
         </main>
 
         <!-- Pie de Página --><footer class="p-4 bg-gray-800 text-center text-gray-400 text-sm">

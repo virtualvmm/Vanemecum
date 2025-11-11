@@ -40,12 +40,16 @@ class StorePatogenoRequest extends FormRequest
             'tipo_patogeno_id' => ['required', 'exists:tipo_patogenos,id'],
 
             // Relación N:1 a Fuente (opcional). Debe existir si se proporciona.
-            'fuente_id' => ['nullable', 'exists:fuentes,id'],
+            'fuente_id' => ['nullable', 'exists:fuentes_informacion,id'],
             
             'descripcion' => ['nullable', 'string'],
             
             // El campo del archivo es el que viaja en el request, por eso lo llamamos 'image_url'.
             'image_url' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], // 2MB max
+
+            // Imágenes adicionales (múltiples)
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:4096'],
 
             // Campo booleano (checkbox). Puede ser 'null' si no está marcado.
             'is_active' => ['nullable', 'boolean'], 

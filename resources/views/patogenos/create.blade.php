@@ -82,6 +82,14 @@
                             </div>
                         </div>
 
+                        {{-- Imágenes adicionales (múltiples) --}}
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <x-input-label for="images" :value="__('Imágenes adicionales (múltiples)')" class="mb-2 font-bold" />
+                            <input id="images" name="images[]" type="file" multiple class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" accept="image/jpeg,image/png,image/gif,image/svg+xml" />
+                            <x-input-error class="mt-2" :messages="$errors->get('images')" />
+                            <div id="multi-image-preview" class="mt-3 grid grid-cols-3 gap-3"></div>
+                        </div>
+
                         {{-- Campo Is Active (MEJORADO con input hidden) --}}
                         {{-- Input oculto para asegurar que el valor '0' se envíe si el checkbox no está marcado --}}
                         <input type="hidden" name="is_active" value="0">
@@ -163,6 +171,25 @@
                         preview.src = '';
                         previewContainer.classList.add('hidden');
                     }
+                });
+            </script>
+
+            <script>
+                // Previsualización rápida de múltiples imágenes (cliente)
+                document.getElementById('images').addEventListener('change', function(event) {
+                    const container = document.getElementById('multi-image-preview');
+                    container.innerHTML = '';
+                    const files = event.target.files;
+                    Array.from(files).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'h-24 w-full object-cover rounded border';
+                            container.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    });
                 });
             </script>
 

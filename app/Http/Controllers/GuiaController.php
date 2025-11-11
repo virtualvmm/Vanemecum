@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Patogeno; // Importamos el modelo Patogeno
+use App\Models\TipoPatogeno;
 
 class GuiaController extends Controller
 {
@@ -24,13 +25,17 @@ class GuiaController extends Controller
             })
             ->orderBy('nombre');
 
-        // Cargar colecciones por tipo (para carrusel estilo Netflix)
-        $virus = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Virus'))->get();
-        $bacterias = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Bacteria'))->get();
-        $hongos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Hongo'))->get();
-        $parasitos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Parásito'))->get();
+        // Secciones dinámicas por cada tipo existente en BD
+        $sections = [];
+        $tipos = TipoPatogeno::orderBy('nombre')->get();
+        foreach ($tipos as $tipo) {
+            $sections[$tipo->nombre] = (clone $base)->where('tipo_patogeno_id', $tipo->id)->get();
+        }
 
-        return view('guia.index', compact('virus', 'bacterias', 'hongos', 'parasitos', 'query'));
+        return view('guia.index', [
+            'sections' => $sections,
+            'query' => $query,
+        ]);
     }
 
 

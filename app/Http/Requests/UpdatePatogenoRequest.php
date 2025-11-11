@@ -50,13 +50,20 @@ class UpdatePatogenoRequest extends FormRequest
             'tipo_patogeno_id' => ['required', 'exists:tipo_patogenos,id'],
             
             // Relación 1:N con Fuente (puede ser nula)
-            'fuente_id' => ['nullable', 'exists:fuentes,id'], 
+            'fuente_id' => ['nullable', 'exists:fuentes_informacion,id'], 
             
             'descripcion' => ['nullable', 'string'],
             
             // El campo de imagen es opcional. Si se envía, debe ser un archivo de imagen.
             'image_url' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'], 
             
+            // Imágenes adicionales (múltiples)
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:4096'],
+            'primary_image_id' => ['nullable', 'integer'],
+            'delete_image_ids' => ['nullable', 'array'],
+            'delete_image_ids.*' => ['integer'],
+
             'is_active' => ['nullable', 'boolean'],
 
             // Relaciones Muchos a Muchos (M:M)

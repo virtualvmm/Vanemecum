@@ -7,6 +7,7 @@ use App\Models\TipoPatogeno;
 use App\Models\Tratamiento;
 use App\Models\Sintoma;
 use App\Models\Fuente;
+use App\Models\PatogenoImage;
 use App\Http\Requests\StorePatogenoRequest;
 use App\Http\Requests\UpdatePatogenoRequest; // Usamos el Request dedicado
 use Illuminate\Http\Request;
@@ -109,6 +110,24 @@ class PatogenoController extends Controller
         $patogeno->tratamientos()->sync($data['tratamientos'] ?? []);
         $patogeno->sintomas()->sync($data['sintomas'] ?? []);
 
+        // 6. Imágenes adicionales (múltiples)
+        if ($request->hasFile('images')) {
+            $createdImages = [];
+            foreach ($request->file('images') as $idx => $file) {
+                $path = $file->store('patogenos', 'public');
+                $createdImages[] = PatogenoImage::create([
+                    'patogeno_id' => $patogeno->id,
+                    'path' => Storage::url($path),
+                    'caption' => null,
+                    'is_primary' => false,
+                ]);
+            }
+            // Si no hay principal y hemos subido, marcamos la primera como principal
+            if (count($createdImages) > 0) {
+                $createdImages[0]->update(['is_primary' => true]);
+            }
+        }
+
         return redirect()->route('patogenos.index')->with('success', 'Patógeno creado exitosamente.');
     }
 
@@ -194,6 +213,46 @@ class PatogenoController extends Controller
         // 4. Sincronizar relaciones Muchos a Muchos
         $patogeno->tratamientos()->sync($data['tratamientos'] ?? []);
         $patogeno->sintomas()->sync($data['sintomas'] ?? []);
+
+        // 5. Borrado de imágenes marcadas
+        $deleteIds = $request->input('delete_image_ids', []);
+        if (!empty($deleteIds)) {
+            $imagesToDelete = PatogenoImage::where('patogeno_id', $patogeno->id)->whereIn('id', $deleteIds)->get();
+            foreach ($imagesToDelete as $img) {
+                $pathToDelete = str_replace(Storage::url(''), '', $img->path);
+                Storage::disk('public')->delete($pathToDelete);
+                $img->delete();
+            }
+        }
+
+        // 6. Subida de nuevas imágenes (múltiples)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('patogenos', 'public');
+                PatogenoImage::create([
+                    'patogeno_id' => $patogeno->id,
+                    'path' => Storage::url($path),
+                    'caption' => null,
+                    'is_primary' => false,
+                ]);
+            }
+        }
+
+        // 7. Marcar imagen principal
+        $primaryId = $request->input('primary_image_id');
+        if ($primaryId) {
+            PatogenoImage::where('patogeno_id', $patogeno->id)->update(['is_primary' => false]);
+            PatogenoImage::where('patogeno_id', $patogeno->id)->where('id', $primaryId)->update(['is_primary' => true]);
+        } else {
+            // Si no hay ninguna principal, aseguramos una por defecto
+            $hasPrimary = PatogenoImage::where('patogeno_id', $patogeno->id)->where('is_primary', true)->exists();
+            if (!$hasPrimary) {
+                $first = PatogenoImage::where('patogeno_id', $patogeno->id)->first();
+                if ($first) {
+                    $first->update(['is_primary' => true]);
+                }
+            }
+        }
 
         return redirect()->route('patogenos.index')->with('success', 'Patógeno actualizado exitosamente.');
     }

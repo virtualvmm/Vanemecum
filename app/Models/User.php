@@ -64,8 +64,8 @@ class User extends Authenticatable
      */
     public function patogenos(): BelongsToMany
     {
-        // Usa el modelo singular Patogeno
-        return $this->belongsToMany(Patogeno::class, 'user_patogeno', 'user_id', 'patogeno_id')
+        // Tabla pivote real en BD: 'patogeno_user'
+        return $this->belongsToMany(Patogeno::class, 'patogeno_user', 'user_id', 'patogeno_id')
                     ->withPivot('estado_coleccion')
                     ->withTimestamps();
     }

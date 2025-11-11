@@ -30,12 +30,6 @@
 
                 <!-- Carruseles por tipo (estilo Netflix) -->
                 @php
-                    $sections = [
-                        'Virus' => $virus ?? collect(),
-                        'Bacterias' => $bacterias ?? collect(),
-                        'Hongos' => $hongos ?? collect(),
-                        'Parásitos' => $parasitos ?? collect(),
-                    ];
                     $typeColors = [
                         'Virus' => 'bg-red-600',
                         'Bacterias' => 'bg-blue-600',
