@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Para la relación con Contacto
 
 class User extends Authenticatable
 {
@@ -70,15 +69,6 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
     
-    /**
-     * Relación Uno a Muchos: Un usuario crea muchos contactos.
-     */
-    public function contactos(): HasMany
-    {
-        // Usa el modelo singular Contacto
-        return $this->hasMany(Contacto::class, 'user_id');
-    }
-
     /* -------------------------------------------------------------------------- */
     /* HELPERS (Métodos de Ayuda) */
     /* -------------------------------------------------------------------------- */
