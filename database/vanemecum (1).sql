@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-11-2025 a las 12:01:44
+-- Tiempo de generación: 12-11-2025 a las 12:11:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -18,9 +18,17 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `vanemecum`
+-- Crear la base de datos si no existe
 --
 
+CREATE DATABASE IF NOT EXISTS vanemecum
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+--
+-- Base de datos: vanemecum
+--
+USE vanemecum;
 -- --------------------------------------------------------
 
 --
@@ -216,8 +224,7 @@ INSERT INTO `patogenos` (`id`, `nombre`, `descripcion`, `image_url`, `is_active`
 (13, 'Agente Patógeno Tryciaton Strain m48', 'Descubierto en 1977. Distinctio adipisci eaque esse rerum. Repudiandae in officia suscipit inventore rem nulla. Perspiciatis quas quas officiis ratione hic exercitationem. Requiere contención Nivel 3.', NULL, 1, 4, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (14, 'Cryptococcus Lake Litzybury Strain w31', 'Descubierto en 1978. At alias est eligendi et dolore sint. Neque accusamus quia eum. Dolor molestiae omnis est architecto. Corporis provident suscipit saepe vero delectus veritatis doloremque. Corrupti voluptatem et tempora. Requiere contención Nivel 4.', NULL, 1, 3, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (15, 'Salmonella New Ahmed Strain p21', 'Descubierto en 2011. Deserunt libero officia facere quibusdam. Molestiae error amet est rem. Sit aut omnis aliquam dolore dolor placeat officiis. Assumenda quo maiores impedit numquam hic hic doloremque deserunt. Requiere contención Nivel 3.', NULL, 1, 2, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
-(16, 'Adenovirus Yvonnemouth Strain a82', 'Descubierto en 1999. Laborum et eius voluptatem iste. Amet consequatur sit repellat non modi illum. Debitis voluptates non voluptatibus quos. Aliquid aut optio tempore aperiam id magnam tempora iste. Corrupti qui reiciendis qui nemo. Requiere contención Nivel 2.', NULL, 1, 1, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
-(17, 'Aspergillus Schusterville Strain f41', 'Descubierto en 1990. Quia vel doloribus sequi quod aperiam. Debitis illo unde ut necessitatibus dolorem et sit. Adipisci commodi ut et assumenda eaque tempore est repudiandae. Non voluptas hic perferendis fugit nobis nam iure. Ratione cumque quisquam id non maiores. Optio nesciunt repudiandae nulla asperiores ad. Requiere contención Nivel 3.', NULL, 1, 3, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
+(16, 'Adenovirus Yvonnemouth Strain a82', 'Descubierto en 1999. Laborum et eius voluptatem iste. Amet consequatur sit repellat non modi illum. Debitis voluptates non voluptatibus quos. Aliquid aut optio tempore aperiam id magnam tempora iste. Corrupti qui reiciendis qui nemo. Requiere contención Nivel 2.', '/storage/patogenos/Q6AJ1xNZm3a5EQ3XMNJBiFwoBPEr57JD6bYPOEgc.jpg', 0, 1, NULL, '2025-10-28 13:22:08', '2025-11-11 10:09:15'),
 (18, 'Virus de la Raeganmouth Strain j2', 'Descubierto en 1992. Accusamus et quidem qui commodi. Atque nemo accusamus sint expedita. Placeat quis tempora consequatur. Delectus molestiae iure laudantium non deserunt sit possimus quo. Requiere contención Nivel 1.', NULL, 1, 1, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (19, 'Orthomyxovirus West Keagan Strain f19', 'Descubierto en 1980. Eaque hic et magnam sed qui officiis. Vero esse commodi quam tempora illo. Aperiam et molestiae nisi voluptatem repellendus. Recusandae quas cumque sit sequi voluptatem inventore illum. Requiere contención Nivel 1.', NULL, 1, 1, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (20, 'Aspergillus New Chloe Strain a52', 'Descubierto en 2003. Et dolores maiores hic voluptatum possimus. Qui ducimus architecto et ut et totam in. Commodi unde labore aliquam amet odio. Aut nobis vitae natus at nostrum sed. Ab delectus porro dolor ad eaque est distinctio. Requiere contención Nivel 4.', NULL, 1, 3, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
@@ -230,7 +237,24 @@ INSERT INTO `patogenos` (`id`, `nombre`, `descripcion`, `image_url`, `is_active`
 (27, 'Streptococcus Kaitlinland Strain t99', 'Descubierto en 2018. Ratione omnis officiis nulla a nihil et a voluptas. Corporis fugiat quod quas aut blanditiis quia. Enim nihil sapiente expedita eius aut temporibus tempora. Praesentium quia amet asperiores non. Error voluptatem est commodi neque cumque repudiandae qui. Quia enim et nostrum in reprehenderit molestiae velit. Requiere contención Nivel 3.', NULL, 1, 2, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (28, 'Cryptococcus Vestaside Strain o25', 'Descubierto en 1979. Quibusdam perspiciatis explicabo corporis mollitia totam molestiae laudantium. Voluptatem perspiciatis optio eaque dignissimos temporibus. Occaecati qui perferendis culpa harum. Sunt harum saepe recusandae deleniti et esse quis. Voluptatum debitis eligendi aliquam nihil fugit et. Requiere contención Nivel 1.', NULL, 1, 3, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
 (29, 'Rinovirus New Alvah Strain n57', 'Descubierto en 2005. Dolorem ducimus ea facere ipsum sed et. Ut et voluptas vero rerum odit nulla dignissimos. Nostrum id quam quisquam et corrupti nemo qui magni. Totam quia totam earum in nesciunt numquam. Officiis ducimus quia quibusdam molestiae assumenda vero. Quos ut sequi aspernatur numquam ut mollitia cum ducimus. Requiere contención Nivel 2.', NULL, 1, 1, NULL, '2025-10-28 13:22:08', '2025-10-28 13:22:08'),
-(30, 'Agente Patógeno Lake Natland Strain d12', 'Descubierto en 2008. Labore praesentium quo molestiae sed et. Sint exercitationem consequatur nesciunt. Ut ipsa magnam voluptas doloribus inventore. Est magni porro dolorum vitae fugiat accusamus qui. Quas quia dolorum a et et est. Deserunt sunt debitis quaerat quia ducimus voluptatem. Requiere contención Nivel 2.', NULL, 1, 4, 2, '2025-10-28 13:22:08', '2025-11-11 09:28:15');
+(30, 'Agente Patógeno Lake Natland Strain d12', 'Descubierto en 2008. Labore praesentium quo molestiae sed et. Sint exercitationem consequatur nesciunt. Ut ipsa magnam voluptas doloribus inventore. Est magni porro dolorum vitae fugiat accusamus qui. Quas quia dolorum a et et est. Deserunt sunt debitis quaerat quia ducimus voluptatem. Requiere contención Nivel 2.', NULL, 1, 4, 2, '2025-10-28 13:22:08', '2025-11-11 09:28:15'),
+(31, 'prueba', 'asdfasdfdsfsdf', NULL, 1, 2, NULL, '2025-11-11 10:04:45', '2025-11-11 10:04:45');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `patogeno_images`
+--
+
+CREATE TABLE `patogeno_images` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `patogeno_id` bigint(20) UNSIGNED NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `caption` varchar(255) DEFAULT NULL,
+  `is_primary` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -338,13 +362,6 @@ INSERT INTO `patogeno_sintoma` (`patogeno_id`, `sintoma_id`) VALUES
 (16, 17),
 (16, 18),
 (16, 19),
-(17, 2),
-(17, 3),
-(17, 8),
-(17, 10),
-(17, 12),
-(17, 19),
-(17, 25),
 (18, 1),
 (18, 6),
 (18, 17),
@@ -419,7 +436,8 @@ INSERT INTO `patogeno_sintoma` (`patogeno_id`, `sintoma_id`) VALUES
 (30, 17),
 (30, 18),
 (30, 19),
-(30, 24);
+(30, 24),
+(31, 8);
 
 -- --------------------------------------------------------
 
@@ -492,10 +510,6 @@ INSERT INTO `patogeno_tratamiento` (`patogeno_id`, `tratamiento_id`) VALUES
 (16, 16),
 (16, 24),
 (16, 36),
-(17, 13),
-(17, 16),
-(17, 22),
-(17, 29),
 (18, 14),
 (18, 17),
 (19, 23),
@@ -593,7 +607,8 @@ INSERT INTO `roles` (`id`, `nombre`, `descripcion`, `created_at`, `updated_at`) 
 (1, 'Administrador', 'Control total sobre el sistema y el contenido.', NULL, NULL),
 (2, 'Editor', 'Puede crear y modificar contenido (Patógenos, Tratamientos, Noticias).', NULL, NULL),
 (3, 'Lector', 'Solo puede ver el contenido del Vademécum.', NULL, NULL),
-(4, 'Admin', 'Administrador del sistema', '2025-11-05 12:39:06', '2025-11-05 12:39:06');
+(4, 'Admin', 'Administrador del sistema', '2025-11-05 12:39:06', '2025-11-05 12:39:06'),
+(5, 'Usuario', 'Usuario estándar', '2025-11-11 10:22:25', '2025-11-11 10:22:25');
 
 -- --------------------------------------------------------
 
@@ -611,7 +626,8 @@ CREATE TABLE `role_user` (
 --
 
 INSERT INTO `role_user` (`user_id`, `role_id`) VALUES
-(2, 4);
+(2, 4),
+(3, 5);
 
 -- --------------------------------------------------------
 
@@ -805,7 +821,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `dni`, `telefono`, `direccion`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'vanesa', 'virtualvmm@gmail.com', NULL, NULL, NULL, NULL, '$2y$10$Had5CEZqqIuhQ2TZBlTV2OYcegfab7IUuDKMFG9syN/nooQ2uVrT.', NULL, '2025-11-05 11:39:09', '2025-11-05 11:39:09'),
-(2, 'admin', 'admin@example.com', '00000000A', '600000000', 'Administración', NULL, '$2y$10$DjCuyjvJpY/frcUIwTp21.3w6pQXP8IKqU58WX86g.AFzzGJD/ptm', NULL, '2025-11-05 12:39:06', '2025-11-05 12:39:06');
+(2, 'admin', 'admin@example.com', '00000000A', '600000000', 'Administración', NULL, '$2y$10$DjCuyjvJpY/frcUIwTp21.3w6pQXP8IKqU58WX86g.AFzzGJD/ptm', NULL, '2025-11-05 12:39:06', '2025-11-05 12:39:06'),
+(3, 'pepe', 'prueba@prueba.com', NULL, NULL, NULL, NULL, '$2y$10$yOC42CBgSZJ9qbUSJjEfi.eErzGMNY7Fwuje61Axmia/g4zmN7Dui', NULL, '2025-11-11 10:22:25', '2025-11-11 10:22:25');
 
 --
 -- Índices para tablas volcadas
@@ -874,6 +891,13 @@ ALTER TABLE `patogenos`
   ADD UNIQUE KEY `patogenos_nombre_unique` (`nombre`),
   ADD KEY `patogenos_tipo_patogeno_id_foreign` (`tipo_patogeno_id`),
   ADD KEY `patogenos_fuente_id_fk` (`fuente_id`);
+
+--
+-- Indices de la tabla `patogeno_images`
+--
+ALTER TABLE `patogeno_images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `patogeno_id` (`patogeno_id`,`is_primary`);
 
 --
 -- Indices de la tabla `patogeno_sintoma`
@@ -1004,7 +1028,13 @@ ALTER TABLE `noticias`
 -- AUTO_INCREMENT de la tabla `patogenos`
 --
 ALTER TABLE `patogenos`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+
+--
+-- AUTO_INCREMENT de la tabla `patogeno_images`
+--
+ALTER TABLE `patogeno_images`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `personal_access_tokens`
@@ -1016,7 +1046,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `sintomas`
@@ -1046,7 +1076,7 @@ ALTER TABLE `tratamientos`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
@@ -1083,6 +1113,12 @@ ALTER TABLE `noticias`
 ALTER TABLE `patogenos`
   ADD CONSTRAINT `patogenos_fuente_id_fk` FOREIGN KEY (`fuente_id`) REFERENCES `fuentes_informacion` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `patogenos_tipo_patogeno_id_foreign` FOREIGN KEY (`tipo_patogeno_id`) REFERENCES `tipo_patogenos` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `patogeno_images`
+--
+ALTER TABLE `patogeno_images`
+  ADD CONSTRAINT `fk_patogeno_images_patogeno` FOREIGN KEY (`patogeno_id`) REFERENCES `patogenos` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `patogeno_sintoma`
