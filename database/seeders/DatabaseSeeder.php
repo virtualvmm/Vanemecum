@@ -28,10 +28,14 @@ class DatabaseSeeder extends Seeder
             TratamientoSeeder::class,  // Siembra los datos de tratamientos
         ]);
 
-        // 2. Tablas principales y tablas pivote (CON dependencias)
-        // PatogenoSeeder DEBE ir al final, ya que utiliza los datos sembrados anteriormente.
+        // 2. Patógenos: solo reales (virus, bacterias, hongos, parásitos), sin inventados
         $this->call([
-            PatogenoSeeder::class,
+            PatogenosCuratedSeeder::class,
+        ]);
+
+        // 3. Usuario administrador (admin@example.com / 12345678)
+        $this->call([
+            AdminUserSeeder::class,
         ]);
         
         // ---------------------------------------------------------------------

@@ -81,9 +81,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ---------------------------------------------------------------------
     // RUTAS ADICIONALES PARA EL MENÚ 
     // ---------------------------------------------------------------------
-    // Tratamientos: index y show públicos; resto solo admin
+    // Tratamientos: index y show públicos; create/store/edit/update/destroy solo admin
+    // IMPORTANTE: /create y /store deben ir ANTES de /{tratamiento} para no capturar "create" como ID
     Route::get('/tratamientos', [TratamientoController::class, 'index'])->name('tratamientos.index');
-    Route::get('/tratamientos/{tratamiento}', [TratamientoController::class, 'show'])->name('tratamientos.show');
     Route::middleware('is_admin')->group(function () {
         Route::get('/tratamientos/create', [TratamientoController::class, 'create'])->name('tratamientos.create');
         Route::post('/tratamientos', [TratamientoController::class, 'store'])->name('tratamientos.store');
@@ -91,6 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/tratamientos/{tratamiento}', [TratamientoController::class, 'update'])->name('tratamientos.update');
         Route::delete('/tratamientos/{tratamiento}', [TratamientoController::class, 'destroy'])->name('tratamientos.destroy');
     });
+    Route::get('/tratamientos/{tratamiento}', [TratamientoController::class, 'show'])->name('tratamientos.show');
 
     // Guía: índice y detalle
     Route::get('/guia', [GuiaController::class, 'index'])->name('guia.index');

@@ -23,9 +23,9 @@
                             $tipo = optional($p->tipo)->nombre;
                             $badge = match ($tipo) {
                                 'Virus' => 'bg-red-100 text-red-800',
-                                'Bacteria' => 'bg-blue-100 text-blue-800',
-                                'Hongo' => 'bg-green-100 text-green-800',
-                                'Parásito' => 'bg-yellow-100 text-yellow-800',
+                                'Bacterias' => 'bg-blue-100 text-blue-800',
+                                'Hongos' => 'bg-green-100 text-green-800',
+                                'Parásitos' => 'bg-yellow-100 text-yellow-800',
                                 default => 'bg-gray-100 text-gray-800',
                             };
                         @endphp

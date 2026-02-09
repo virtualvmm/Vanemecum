@@ -51,6 +51,8 @@ class TratamientoController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['tipo_id' => $request->input('tipo_id') ?: null]);
+
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:150|unique:tratamientos,nombre',
             'tipo_id' => 'nullable|exists:tipo_tratamientos,id',
@@ -64,8 +66,13 @@ class TratamientoController extends Controller
         }
 
         try {
-            Tratamiento::create($request->all());
-            
+            $data = [
+                'nombre'      => $request->input('nombre'),
+                'descripcion' => $request->input('descripcion', ''),
+                'tipo_id'     => $request->filled('tipo_id') ? $request->input('tipo_id') : null,
+            ];
+            Tratamiento::create($data);
+
             return redirect()->route('tratamientos.index')->with('success', 'Tratamiento creado exitosamente.');
         } catch (\Exception $e) {
             Log::error('Error al crear tratamiento: ' . $e->getMessage());
@@ -102,6 +109,8 @@ class TratamientoController extends Controller
      */
     public function update(Request $request, Tratamiento $tratamiento)
     {
+        $request->merge(['tipo_id' => $request->input('tipo_id') ?: null]);
+
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:150|unique:tratamientos,nombre,' . $tratamiento->id,
             'tipo_id' => 'nullable|exists:tipo_tratamientos,id',
@@ -115,8 +124,13 @@ class TratamientoController extends Controller
         }
 
         try {
-            $tratamiento->update($request->all());
-            
+            $data = [
+                'nombre'      => $request->input('nombre'),
+                'descripcion' => $request->input('descripcion', ''),
+                'tipo_id'     => $request->filled('tipo_id') ? $request->input('tipo_id') : null,
+            ];
+            $tratamiento->update($data);
+
             return redirect()->route('tratamientos.index')->with('success', 'Tratamiento actualizado exitosamente.');
         } catch (\Exception $e) {
             Log::error('Error al actualizar tratamiento: ' . $e->getMessage());

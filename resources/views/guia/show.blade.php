@@ -19,13 +19,14 @@
                 <div class="mt-4 border-b pb-4">
                     <!-- Tipo de Patógeno (Clasificación): Viene de la relación 'tipo' -->
                     @php
-                        // Determinación del color basado en el nombre del tipo, no en una columna 'clasificacion'
+                        // Colores según tipo (nombres deben coincidir con tipo_patogenos: Virus, Bacterias, Hongos, Parásitos)
                         $tipoNombre = optional($patogeno->tipo)->nombre ?? 'Desconocido';
                         $colorClass = match ($tipoNombre) {
-                            'Bacteria' => 'bg-blue-100 text-blue-800',
                             'Virus' => 'bg-red-100 text-red-800',
-                            'Hongo' => 'bg-green-100 text-green-800',
-                            default => 'bg-yellow-100 text-yellow-800',
+                            'Bacterias' => 'bg-blue-100 text-blue-800',
+                            'Hongos' => 'bg-green-100 text-green-800',
+                            'Parásitos' => 'bg-yellow-100 text-yellow-800',
+                            default => 'bg-gray-100 text-gray-800',
                         };
                     @endphp
 
@@ -38,30 +39,35 @@
                         {{ $patogeno->nombre }}
                     </h1>
                     <p class="text-xl text-gray-600 italic mt-1">
-                        ({{ $patogeno->descripcion_corta ?? 'Sin descripción corta' }})
+                        ({{ Str::limit($patogeno->descripcion ?? '', 120) ?: 'Sin descripción' }})
                     </p>
                 </div>
 
                 <!-- Contenido Detallado: Organizado por Secciones -->
                 <div class="mt-6 space-y-8">
 
-                    <!-- SECCIÓN 1: Descripción Completa y Datos Básicos -->
+                    <!-- SECCIÓN 1: Descripción e información básica -->
                     <div class="border-l-4 border-indigo-500 pl-4">
                         <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('Información General') }}</h2>
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6 text-gray-700">
-                            <p>{{ $patogeno->descripcion_completa }}</p>
+                            <p>{{ $patogeno->descripcion ?? 'Sin descripción.' }}</p>
                         </div>
-                        
+                        @if (isset($patogeno->fecha_deteccion_inicial) || isset($patogeno->habitat))
                         <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-gray-700">
+                            @if (!empty($patogeno->fecha_deteccion_inicial))
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500">{{ __('Fecha de Detección Inicial') }}</dt>
                                 <dd class="text-lg">{{ \Carbon\Carbon::parse($patogeno->fecha_deteccion_inicial)->format('d/m/Y') }}</dd>
                             </div>
-                             <div class="col-span-1">
-                                <dt class="font-medium text-gray-500">{{ __('Habitat Principal') }}</dt>
+                            @endif
+                            @if (!empty($patogeno->habitat))
+                            <div class="col-span-1">
+                                <dt class="font-medium text-gray-500">{{ __('Hábitat principal') }}</dt>
                                 <dd class="text-lg">{{ $patogeno->habitat }}</dd>
                             </div>
+                            @endif
                         </dl>
+                        @endif
                     </div>
 
                     <!-- SECCIÓN 2: Síntomas Asociados -->

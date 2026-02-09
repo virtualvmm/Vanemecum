@@ -3,32 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Patogeno; // Importamos el modelo Patogeno
+use Illuminate\Support\Facades\Schema;
+use App\Models\Patogeno;
 
 class GuiaController extends Controller
 {
     /**
      * Muestra el índice (la página principal) de la Guía de Patógenos (Vanemecum).
      * Incluye lógica para buscar patógenos.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
         $query = $request->input('query');
 
         $base = Patogeno::with('tipo')
+            ->when(Schema::hasColumn('patogenos', 'is_active'), fn ($q) => $q->where('is_active', true))
             ->when($query, function ($q) use ($query) {
                 $q->where('nombre', 'LIKE', "%{$query}%");
             })
             ->orderBy('nombre');
 
-        // Cargar colecciones por tipo (para carrusel estilo Netflix)
+        // Cargar colecciones por tipo (para carrusel estilo Netflix). Nombres deben coincidir con tipo_patogenos (AuxiliarSeeder).
         $virus = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Virus'))->get();
-        $bacterias = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Bacteria'))->get();
-        $hongos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Hongo'))->get();
-        $parasitos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Parásito'))->get();
+        $bacterias = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Bacterias'))->get();
+        $hongos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Hongos'))->get();
+        $parasitos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Parásitos'))->get();
 
         return view('guia.index', compact('virus', 'bacterias', 'hongos', 'parasitos', 'query'));
     }
@@ -60,7 +59,8 @@ class GuiaController extends Controller
     {
         $query = $request->input('query');
         $patogenos = Patogeno::with('tipo')
-            ->when($query, fn($q) => $q->where('nombre', 'LIKE', "%{$query}%"))
+            ->when(Schema::hasColumn('patogenos', 'is_active'), fn ($q) => $q->where('is_active', true))
+            ->when($query, fn ($q) => $q->where('nombre', 'LIKE', "%{$query}%"))
             ->orderBy('nombre')
             ->paginate(18);
 

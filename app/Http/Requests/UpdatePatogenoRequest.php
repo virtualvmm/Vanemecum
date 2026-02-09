@@ -50,7 +50,7 @@ class UpdatePatogenoRequest extends FormRequest
             'tipo_patogeno_id' => ['required', 'exists:tipo_patogenos,id'],
             
             // Relación 1:N con Fuente (puede ser nula)
-            'fuente_id' => ['nullable', 'exists:fuentes,id'], 
+            'fuente_id' => ['nullable', 'exists:fuentes_informacion,id'], 
             
             'descripcion' => ['nullable', 'string'],
             

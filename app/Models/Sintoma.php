@@ -12,6 +12,8 @@ class Sintoma extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['nombre', 'gravedad', 'descripcion'];
+
     // Relación N:M con Patógenos
     public function patogenos()
     {

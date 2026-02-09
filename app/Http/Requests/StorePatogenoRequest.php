@@ -14,15 +14,22 @@ class StorePatogenoRequest extends FormRequest
 {
     /**
      * Determina si el usuario está autorizado para hacer esta petición.
-     * En un contexto de administración, esto suele ser 'true' o comprobar permisos específicos.
      *
      * @return bool
      */
     public function authorize(): bool
     {
-        // Asumiendo que solo los usuarios autenticados pueden crear patógenos.
-        // Si tienes Gates o Policies, deberías usarlos aquí, pero por defecto, asumimos true.
-        return true; 
+        return true;
+    }
+
+    /**
+     * Preparar datos antes de validar (vacío => null para fuente_id).
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('fuente_id') && $this->fuente_id === '') {
+            $this->merge(['fuente_id' => null]);
+        }
     }
 
     /**
@@ -40,7 +47,7 @@ class StorePatogenoRequest extends FormRequest
             'tipo_patogeno_id' => ['required', 'exists:tipo_patogenos,id'],
 
             // Relación N:1 a Fuente (opcional). Debe existir si se proporciona.
-            'fuente_id' => ['nullable', 'exists:fuentes,id'],
+            'fuente_id' => ['nullable', 'exists:fuentes_informacion,id'],
             
             'descripcion' => ['nullable', 'string'],
             
