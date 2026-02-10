@@ -1,3 +1,8 @@
+@php
+    $unreadMensajes = auth()->check() && auth()->user()->hasRole('Admin')
+        ? \App\Models\ContactMessage::where('leido', false)->count()
+        : 0;
+@endphp
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,6 +33,20 @@
                     <x-nav-link :href="route('guia.index')" :active="request()->routeIs('guia.index')">
                         {{ __('Guía Rápida') }}
                     </x-nav-link>
+                    @admin
+                        <x-nav-link :href="route('admin.mensajes.index')" :active="request()->routeIs('admin.mensajes.*')" class="inline-flex items-center gap-1.5">
+                            {{ __('Mensajes') }}
+                            @if ($unreadMensajes > 0)
+                                <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full" title="{{ $unreadMensajes }} sin leer">
+                                    {{ $unreadMensajes > 99 ? '99+' : $unreadMensajes }}
+                                </span>
+                            @endif
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('contact.create')" :active="request()->routeIs('contact.*')">
+                            {{ __('Contactar') }}
+                        </x-nav-link>
+                    @endadmin
                 </div>
             </div>
 
@@ -96,6 +115,22 @@
             <x-responsive-nav-link :href="route('guia.index')" :active="request()->routeIs('guia.index')">
                 {{ __('Guía Rápida') }}
             </x-responsive-nav-link>
+            @admin
+                <x-responsive-nav-link :href="route('admin.mensajes.index')" :active="request()->routeIs('admin.mensajes.*')">
+                    <span class="inline-flex items-center gap-2">
+                        {{ __('Mensajes') }}
+                        @if ($unreadMensajes > 0)
+                            <span class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                {{ $unreadMensajes > 99 ? '99+' : $unreadMensajes }}
+                            </span>
+                        @endif
+                    </span>
+                </x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('contact.create')" :active="request()->routeIs('contact.*')">
+                    {{ __('Contactar') }}
+                </x-responsive-nav-link>
+            @endadmin
         </div>
 
         <!-- Responsive Settings Options -->

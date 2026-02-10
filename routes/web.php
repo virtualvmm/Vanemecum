@@ -4,8 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PatogenoController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\GuiaController;
-// Importamos el nuevo controlador para Síntomas
-use App\Http\Controllers\Admin\SintomaController; 
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\SintomaController;
+use App\Http\Controllers\Admin\ContactMessageController; 
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -73,6 +74,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Usamos Route::resource para simplificar la creación de las 7 rutas del CRUD (SOLO ADMIN)
     Route::middleware('is_admin')->group(function () {
         Route::resource('admin/sintomas', SintomaController::class)->names('admin.sintomas');
+        // Mensajes de contacto (formulario de usuarios)
+        Route::get('admin/mensajes', [ContactMessageController::class, 'index'])->name('admin.mensajes.index');
+        Route::get('admin/mensajes/{mensaje}', [ContactMessageController::class, 'show'])->name('admin.mensajes.show');
+        Route::patch('admin/mensajes/{mensaje}/leido', [ContactMessageController::class, 'toggleLeido'])->name('admin.mensajes.toggle-leido');
     });
     // Nota: El prefijo de URL es /admin/sintomas
     // Las rutas generadas son: admin.sintomas.index, admin.sintomas.create, admin.sintomas.store, etc.
@@ -98,6 +103,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/guia/{patogeno}', [GuiaController::class, 'show'])->name('guia.show');
     // Catálogo público completo
     Route::get('/catalogo', [GuiaController::class, 'catalogo'])->name('catalogo.index');
+
+    // Contacto: reportar error, sugerir patógeno, etc. (envía email al admin)
+    Route::get('/contacto', [ContactController::class, 'create'])->name('contact.create');
+    Route::post('/contacto', [ContactController::class, 'store'])->name('contact.store');
 });
 
 // Incluye las rutas de autenticación (login, register, etc.)

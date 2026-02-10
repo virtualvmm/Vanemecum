@@ -35,9 +35,12 @@ class PatogenoController extends Controller
         // Cargamos las relaciones tipo y fuente para mostrarlas en la tabla.
         $patogenos = Patogeno::with(['tipo', 'fuente']);
 
-        // Aplicar filtro de búsqueda si existe un término
+        // Aplicar filtro de búsqueda por nombre o descripción
         if ($query) {
-            $patogenos->where('nombre', 'LIKE', "%{$query}%");
+            $patogenos->where(function ($q) use ($query) {
+                $q->where('nombre', 'LIKE', "%{$query}%")
+                  ->orWhere('descripcion', 'LIKE', "%{$query}%");
+            });
         }
 
         // Obtener los patógenos paginados y ordenados.
@@ -130,13 +133,16 @@ class PatogenoController extends Controller
     {
         // Asumiendo que aquí ya se ha verificado la autorización (ej. PatogenoPolicy::update)
 
+        // Eager load para evitar N+1 (tratamientos y sintomas se usan en la vista)
+        $patogeno->load(['tratamientos', 'sintomas']);
+
         // Cargamos todas las opciones necesarias
         $tipos = TipoPatogeno::orderBy('nombre')->get();
         $tratamientos = Tratamiento::orderBy('nombre')->get();
         $sintomas = Sintoma::orderBy('nombre')->get();
         $fuentes = Fuente::orderBy('nombre')->get();
 
-        // Obtenemos los IDs asignados al patógeno para marcar los checkboxes/select
+        // IDs asignados al patógeno para marcar los checkboxes/select
         $patogenoTratamientos = $patogeno->tratamientos->pluck('id')->toArray();
         $patogenoSintomas = $patogeno->sintomas->pluck('id')->toArray();
         

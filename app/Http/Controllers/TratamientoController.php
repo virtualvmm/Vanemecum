@@ -22,9 +22,12 @@ class TratamientoController extends Controller
         // Consulta base con paginación
         $query = Tratamiento::with('tipo');
 
-        // Aplicar filtro si existe término de búsqueda
+        // Aplicar filtro: nombre o descripción (para todos los usuarios)
         if ($search) {
-            $query->where('nombre', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', '%' . $search . '%')
+                  ->orWhere('descripcion', 'like', '%' . $search . '%');
+            });
         }
 
         // Obtener resultados paginados (10 por página)

@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany; // Para la relación con Contacto
 
 class User extends Authenticatable
 {
@@ -63,23 +62,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Relación Muchos a Muchos con Patogenos (Mi Vanemecum - Tabla Pivote: user_patogeno)
+     * Relación Muchos a Muchos con Patogenos (Mi Vanemecum - Tabla Pivote: patogeno_user)
      */
     public function patogenos(): BelongsToMany
     {
-        // Usa el modelo singular Patogeno
-        return $this->belongsToMany(Patogeno::class, 'user_patogeno', 'user_id', 'patogeno_id')
-                    ->withPivot('estado_coleccion')
+        return $this->belongsToMany(Patogeno::class, 'patogeno_user', 'user_id', 'patogeno_id')
                     ->withTimestamps();
-    }
-    
-    /**
-     * Relación Uno a Muchos: Un usuario crea muchos contactos.
-     */
-    public function contactos(): HasMany
-    {
-        // Usa el modelo singular Contacto
-        return $this->hasMany(Contacto::class, 'user_id');
     }
 
     /* -------------------------------------------------------------------------- */

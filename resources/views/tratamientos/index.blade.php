@@ -25,7 +25,7 @@
             <!-- Formulario de Búsqueda -->
             <form action="{{ route('tratamientos.index') }}" method="GET" class="mb-6">
                 <div class="flex items-center space-x-2">
-                    <input type="text" name="search" placeholder="Buscar por nombre..." value="{{ request('search') }}"
+                    <input type="text" name="search" placeholder="Buscar por nombre o descripción del tratamiento..." value="{{ request('search') }}"
                            class="w-full sm:w-1/3 border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 ease-in-out shadow-md">
                         Buscar
@@ -45,9 +45,6 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                ID
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Nombre
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -64,9 +61,6 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($tratamientos as $tratamiento)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $tratamiento->id }}
-                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{ $tratamiento->nombre }}
                                 </td>
@@ -74,9 +68,8 @@
                                     <!-- Muestra el nombre del tipo, o 'Sin Tipo' si es nulo -->
                                     {{ $tratamiento->tipo->nombre ?? 'Sin Tipo' }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    <!-- Muestra una descripción corta -->
-                                    {{ Str::limit($tratamiento->descripcion, 50) }}
+                                <td class="px-6 py-4 text-sm text-gray-500 max-w-[280px] sm:max-w-md whitespace-normal align-top break-words" title="{{ $tratamiento->descripcion }}">
+                                    {{ $tratamiento->descripcion ? Str::limit($tratamiento->descripcion, 120) : '—' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                     @admin
@@ -97,7 +90,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-8 whitespace-nowrap text-center text-lg text-gray-500">
+                                <td colspan="4" class="px-6 py-8 whitespace-nowrap text-center text-lg text-gray-500">
                                     No se encontraron tratamientos.
                                 </td>
                             </tr>

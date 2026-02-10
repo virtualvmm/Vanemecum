@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Patogeno;
+use Illuminate\Http\Request;
 
 class GuiaController extends Controller
 {
     /**
      * Muestra el índice (la página principal) de la Guía de Patógenos (Vanemecum).
-     * Incluye lógica para buscar patógenos.
+     * Una sola consulta a BD; se agrupa por tipo en PHP para los carruseles.
      */
     public function index(Request $request)
     {
         $query = $request->input('query');
 
-        $base = Patogeno::with('tipo')
-            ->when(Schema::hasColumn('patogenos', 'is_active'), fn ($q) => $q->where('is_active', true))
+        $patogenos = Patogeno::with('tipo')
+            ->where('is_active', true)
             ->when($query, function ($q) use ($query) {
-                $q->where('nombre', 'LIKE', "%{$query}%");
+                $q->where('nombre', 'LIKE', "%{$query}%")
+                  ->orWhere('descripcion', 'LIKE', "%{$query}%");
             })
-            ->orderBy('nombre');
+            ->orderBy('nombre')
+            ->get();
 
-        // Cargar colecciones por tipo (para carrusel estilo Netflix). Nombres deben coincidir con tipo_patogenos (AuxiliarSeeder).
-        $virus = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Virus'))->get();
-        $bacterias = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Bacterias'))->get();
-        $hongos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Hongos'))->get();
-        $parasitos = (clone $base)->whereHas('tipo', fn($q) => $q->where('nombre', 'Parásitos'))->get();
+        // Agrupar por nombre del tipo (una sola consulta ya hecha)
+        $byTipo = $patogenos->groupBy(fn ($p) => $p->tipo?->nombre ?? 'Otros');
+        $virus = $byTipo->get('Virus', collect());
+        $bacterias = $byTipo->get('Bacterias', collect());
+        $hongos = $byTipo->get('Hongos', collect());
+        $parasitos = $byTipo->get('Parásitos', collect());
 
         return view('guia.index', compact('virus', 'bacterias', 'hongos', 'parasitos', 'query'));
     }
@@ -41,9 +43,7 @@ class GuiaController extends Controller
      */
     public function show(Patogeno $patogeno)
     {
-        // El Patogeno ya viene precargado gracias a Route Model Binding.
-        // Cargamos todas las relaciones necesarias para mostrar la ficha completa.
-        // NOTA: 'farmacos' se ha corregido a 'tratamientos', según tu modelo Patogeno.php
+        // Route Model Binding ya carga el patógeno; eager load de relaciones para la ficha.
         $patogeno->load('tipo', 'tratamientos', 'sintomas', 'fuente');
 
         // Devolver la vista de detalle, pasando el objeto patogeno completo.
@@ -59,8 +59,11 @@ class GuiaController extends Controller
     {
         $query = $request->input('query');
         $patogenos = Patogeno::with('tipo')
-            ->when(Schema::hasColumn('patogenos', 'is_active'), fn ($q) => $q->where('is_active', true))
-            ->when($query, fn ($q) => $q->where('nombre', 'LIKE', "%{$query}%"))
+            ->where('is_active', true)
+            ->when($query, function ($q) use ($query) {
+                $q->where('nombre', 'LIKE', "%{$query}%")
+                  ->orWhere('descripcion', 'LIKE', "%{$query}%");
+            })
             ->orderBy('nombre')
             ->paginate(18);
 

@@ -20,13 +20,24 @@
         </div>
     @endif
 
+    <form method="GET" action="{{ route('admin.sintomas.index') }}" class="mb-6 flex flex-wrap items-center gap-2">
+        <input type="search" name="query" value="{{ request('query') }}"
+               placeholder="Buscar por nombre o descripción del síntoma..."
+               class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:border-teal-500 focus:ring-teal-500 w-full sm:w-auto min-w-[200px]">
+        <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-md transition duration-150">
+            Buscar
+        </button>
+        @if (request('query'))
+            <a href="{{ route('admin.sintomas.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
+                Limpiar
+            </a>
+        @endif
+    </form>
+
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        ID
-                    </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Nombre
                     </th>
@@ -44,9 +55,6 @@
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse ($sintomas as $sintoma)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {{ $sintoma->id }}
-                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                             {{ $sintoma->nombre }}
                         </td>
@@ -76,7 +84,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                             No se han encontrado síntomas. Por favor, añada uno nuevo.
                         </td>
                     </tr>

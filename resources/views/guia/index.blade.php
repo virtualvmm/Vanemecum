@@ -14,7 +14,7 @@
                     <input
                         type="search"
                         name="query"
-                        placeholder="Buscar por nombre científico o común..."
+                        placeholder="Buscar por nombre o palabras en la descripción del patógeno..."
                         value="{{ $query ?? '' }}"
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                     >

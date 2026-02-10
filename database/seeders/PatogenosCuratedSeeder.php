@@ -34,11 +34,11 @@ class PatogenosCuratedSeeder extends Seeder
         $tratamientos = [];
         $tratamientos['Oseltamivir'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Oseltamivir'],
-            ['descripcion' => 'Antiviral para influenza. Inhibe la neuraminidasa. Dosis habitual 75 mg cada 12 h, 5 días.', 'tipo_id' => $idAntiviral]
+            ['descripcion' => 'Antiviral para la gripe (influenza). Inhibe la neuraminidasa. Dosis habitual 75 mg cada 12 h, 5 días.', 'tipo_id' => $idAntiviral]
         );
         $tratamientos['Aciclovir'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Aciclovir'],
-            ['descripcion' => 'Antiviral para herpes simple y varicela-zóster. Vía oral o IV según gravedad.', 'tipo_id' => $idAntiviral]
+            ['descripcion' => 'Antiviral para herpes simple y varicela-zóster. Vía oral o intravenosa según gravedad.', 'tipo_id' => $idAntiviral]
         );
         $tratamientos['Ribavirina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Ribavirina'],
@@ -74,15 +74,15 @@ class PatogenosCuratedSeeder extends Seeder
         );
         $tratamientos['Cloroquina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Cloroquina'],
-            ['descripcion' => 'Antipalúdico. Malaria por P. vivax y P. ovale (con primaquina para hipnozoítos).', 'tipo_id' => $idSoporte]
+            ['descripcion' => 'Antipalúdico. Malaria por Plasmodium vivax y P. ovale (con primaquina para hipnozoítos).', 'tipo_id' => $idSoporte]
         );
-        $tratamientos['Arteméter-lumefantrina'] = Tratamiento::firstOrCreate(
-            ['nombre' => 'Arteméter-lumefantrina'],
+        $tratamientos['Arteméter con lumefantrina'] = Tratamiento::firstOrCreate(
+            ['nombre' => 'Arteméter con lumefantrina'],
             ['descripcion' => 'Combinación antipalúdica para malaria no complicada. Esquema de 3 días.', 'tipo_id' => $idSoporte]
         );
         $tratamientos['Albendazol'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Albendazol'],
-            ['descripcion' => 'Antihelmíntico. Ascaris, oxiuros, giardia, equinococo. Dosis única o pauta según parásito.', 'tipo_id' => $idSoporte]
+            ['descripcion' => 'Antihelmíntico. Ascariasis, oxiuriasis, giardiasis, equinococcosis. Dosis única o pauta según parásito.', 'tipo_id' => $idSoporte]
         );
         $tratamientos['Ivermectina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Ivermectina'],
@@ -98,15 +98,11 @@ class PatogenosCuratedSeeder extends Seeder
         );
         $tratamientos['Vancomicina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Vancomicina'],
-            ['descripcion' => 'Antibiótico glicopéptido. MRSA, C. difficile (oral), infecciones graves por Gram positivos. IV.', 'tipo_id' => $idAntibiotico]
+            ['descripcion' => 'Antibiótico glicopéptido. SARM, Clostridioides difficile (vía oral), infecciones graves por bacterias Gram positivas. Vía intravenosa.', 'tipo_id' => $idAntibiotico]
         );
         $tratamientos['Ceftriaxona'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Ceftriaxona'],
-            ['descripcion' => 'Cefalosporina de 3ª generación. Meningitis, gonorrea, infecciones graves. 1-2 g/24 h IV.', 'tipo_id' => $idAntibiotico]
-        );
-        $tratamientos['Doxiciclina'] = Tratamiento::firstOrCreate(
-            ['nombre' => 'Doxiciclina'],
-            ['descripcion' => 'Tetraciclina. Neumonía atípica, Lyme, rickettsiosis, malaria profilaxis. 100 mg/12 h.', 'tipo_id' => $idAntibiotico]
+            ['descripcion' => 'Cefalosporina de 3ª generación. Meningitis, gonorrea, infecciones graves. 1-2 g/24 h por vía intravenosa.', 'tipo_id' => $idAntibiotico]
         );
         $tratamientos['Clindamicina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Clindamicina'],
@@ -114,7 +110,7 @@ class PatogenosCuratedSeeder extends Seeder
         );
         $tratamientos['Anfotericina B'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Anfotericina B'],
-            ['descripcion' => 'Antifúngico de amplio espectro. Infecciones fúngicas invasivas graves. IV.', 'tipo_id' => $idAntifungico]
+            ['descripcion' => 'Antifúngico de amplio espectro. Infecciones fúngicas invasivas graves. Administración por vía intravenosa.', 'tipo_id' => $idAntifungico]
         );
         $tratamientos['Praziquantel'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Praziquantel'],
@@ -122,11 +118,11 @@ class PatogenosCuratedSeeder extends Seeder
         );
         $tratamientos['Mebendazol'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Mebendazol'],
-            ['descripcion' => 'Antihelmíntico. Ascaris, oxiuros, tricocéfalos. 100 mg/12 h 3 días o dosis única.', 'tipo_id' => $idSoporte]
+            ['descripcion' => 'Antihelmíntico. Ascariasis, oxiuriasis, tricuriasis. 100 mg/12 h durante 3 días o dosis única.', 'tipo_id' => $idSoporte]
         );
         $tratamientos['Primaquina'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Primaquina'],
-            ['descripcion' => 'Antipalúdico. Eliminación de hipnozoítos en P. vivax y P. ovale. Requiere descartar déficit G6PD.', 'tipo_id' => $idSoporte]
+            ['descripcion' => 'Antipalúdico. Eliminación de hipnozoítos en Plasmodium vivax y P. ovale. Requiere descartar deficiencia de G6PD.', 'tipo_id' => $idSoporte]
         );
         $tratamientos['Vacunación'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Vacunación'],
@@ -136,13 +132,13 @@ class PatogenosCuratedSeeder extends Seeder
             ['nombre' => 'Tratamiento antituberculoso'],
             ['descripcion' => 'Rifampicina, isoniazida, pirazinamida, etambutol. Pautas de 6 meses según sensibilidad.', 'tipo_id' => $idAntibiotico]
         );
-        $tratamientos['Sulfametoxazol-trimetoprima'] = Tratamiento::firstOrCreate(
-            ['nombre' => 'Sulfametoxazol-trimetoprima'],
-            ['descripcion' => 'Cotrimoxazol. Neumonía por P. jirovecii, infecciones urinarias, toxoplasmosis.', 'tipo_id' => $idAntibiotico]
+        $tratamientos['Cotrimoxazol'] = Tratamiento::firstOrCreate(
+            ['nombre' => 'Cotrimoxazol'],
+            ['descripcion' => 'Sulfametoxazol con trimetoprima. Neumonía por Pneumocystis jirovecii, infecciones urinarias, toxoplasmosis.', 'tipo_id' => $idAntibiotico]
         );
         $tratamientos['Nitazoxanida'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Nitazoxanida'],
-            ['descripcion' => 'Antiparasitario y antiviral. Giardiasis, cryptosporidiosis, rotavirus en niños.', 'tipo_id' => $idSoporte]
+            ['descripcion' => 'Antiparasitario y antiviral. Giardiasis, criptosporidiosis, rotavirus en niños.', 'tipo_id' => $idSoporte]
         );
         $tratamientos['Benznidazol'] = Tratamiento::firstOrCreate(
             ['nombre' => 'Benznidazol'],
@@ -442,7 +438,7 @@ class PatogenosCuratedSeeder extends Seeder
                 'nombre' => 'Pneumocystis jirovecii',
                 'descripcion' => 'Hongo oportunista. Neumonía por Pneumocystis (PCP) en pacientes con VIH o inmunodepresión.',
                 'tipo_patogeno_id' => $idHongos,
-                'tratamientos' => ['Sulfametoxazol-trimetoprima', 'Hidratación y reposo'],
+                'tratamientos' => ['Cotrimoxazol', 'Hidratación y reposo'],
                 'sintomas' => ['Tos', 'Fiebre', 'Fatiga', 'Dolor muscular'],
             ],
             [
@@ -467,7 +463,7 @@ class PatogenosCuratedSeeder extends Seeder
                 'nombre' => 'Plasmodium falciparum',
                 'descripcion' => 'Protozoo. Malaria (paludismo) tropical. Transmisión por mosquito Anopheles. Forma grave: malaria cerebral, anemia hemolítica.',
                 'tipo_patogeno_id' => $idParasitos,
-                'tratamientos' => ['Arteméter-lumefantrina', 'Cloroquina', 'Hidratación y reposo'],
+                'tratamientos' => ['Arteméter con lumefantrina', 'Cloroquina', 'Hidratación y reposo'],
                 'sintomas' => ['Fiebre', 'Escalofríos', 'Cefalea', 'Dolor muscular', 'Fatiga', 'Ictericia', 'Diarrea'],
             ],
             [
@@ -502,7 +498,7 @@ class PatogenosCuratedSeeder extends Seeder
                 'nombre' => 'Toxoplasma gondii',
                 'descripcion' => 'Protozoo. Toxoplasmosis. Infección leve en inmunocompetentes; grave en embarazo (riesgo fetal) e inmunodeprimidos.',
                 'tipo_patogeno_id' => $idParasitos,
-                'tratamientos' => ['Clindamicina', 'Sulfametoxazol-trimetoprima', 'Hidratación y reposo'],
+                'tratamientos' => ['Clindamicina', 'Cotrimoxazol', 'Hidratación y reposo'],
                 'sintomas' => ['Fiebre', 'Cefalea', 'Fatiga', 'Dolor muscular'],
             ],
             [
@@ -551,7 +547,7 @@ class PatogenosCuratedSeeder extends Seeder
                 'nombre' => 'Plasmodium vivax',
                 'descripcion' => 'Protozoo. Malaria por P. vivax. Forma recurrente por hipnozoítos en hígado. Tratamiento con primaquina para radical curación.',
                 'tipo_patogeno_id' => $idParasitos,
-                'tratamientos' => ['Cloroquina', 'Primaquina', 'Arteméter-lumefantrina', 'Hidratación y reposo'],
+                'tratamientos' => ['Cloroquina', 'Primaquina', 'Arteméter con lumefantrina', 'Hidratación y reposo'],
                 'sintomas' => ['Fiebre', 'Escalofríos', 'Cefalea', 'Dolor muscular', 'Fatiga', 'Diarrea'],
             ],
             [

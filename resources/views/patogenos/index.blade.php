@@ -32,7 +32,7 @@
                         <input 
                             type="text" 
                             name="query" 
-                            placeholder="Buscar por nombre..." 
+                            placeholder="Buscar por nombre o descripción del patógeno..." 
                             value="{{ request('query') }}" 
                             class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-1/3"
                         />
@@ -55,7 +55,6 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
@@ -68,8 +67,6 @@
                                 {{-- Bucle sobre los patógenos --}}
                                 @forelse ($patogenos as $patogeno)
                                     <tr class="hover:bg-gray-50 transition duration-100">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $patogeno->id }}</td>
-                                        
                                         {{-- Celda de Imagen --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             @if ($patogeno->image_url)
@@ -118,7 +115,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
                                             {{ __('No se encontraron patógenos.') }}
                                         </td>
                                     </tr>

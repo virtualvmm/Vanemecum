@@ -35,7 +35,7 @@ class AuxiliarSeeder extends Seeder
         // 3. Roles de Usuario
         $roles = [
             ['nombre' => 'Administrador', 'descripcion' => 'Control total sobre el sistema y el contenido.'],
-            ['nombre' => 'Editor', 'descripcion' => 'Puede crear y modificar contenido (Patógenos, Tratamientos, Noticias).'],
+            ['nombre' => 'Editor', 'descripcion' => 'Puede crear y modificar contenido (Patógenos, Tratamientos).'],
             ['nombre' => 'Lector', 'descripcion' => 'Solo puede ver el contenido del Vademécum.'],
         ];
         DB::table('roles')->insertOrIgnore($roles);

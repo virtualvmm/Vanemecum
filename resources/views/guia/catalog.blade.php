@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
 
                 <form method="GET" action="{{ route('catalogo.index') }}" class="mb-6 flex space-x-3">
-                    <input type="search" name="query" placeholder="Buscar por nombre..." value="{{ $query ?? '' }}" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full">
+                    <input type="search" name="query" placeholder="Buscar por nombre o descripción del patógeno..." value="{{ $query ?? '' }}" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full">
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">{{ __('Buscar') }}</button>
                     @if ($query)
                         <a href="{{ route('catalogo.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">{{ __('Limpiar') }}</a>
