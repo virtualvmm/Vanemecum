@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div class="max-w-7xl mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-6">
 
             <!-- Determinamos si estamos creando o editando -->
             @php
@@ -9,7 +9,7 @@
                 $action = $isEditing ? route('tratamientos.update', $tratamiento->id) : route('tratamientos.store');
             @endphp
 
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">{{ $title }}</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6">{{ $title }}</h1>
 
             <!-- Enlace de regreso -->
             <div class="mb-4">

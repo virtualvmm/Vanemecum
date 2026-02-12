@@ -5,23 +5,34 @@
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-full mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div class="py-6 sm:py-8">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-6">
 
-                <!-- Formulario de Búsqueda -->
-                <form method="GET" action="{{ route('guia.index') }}" class="mb-6 flex space-x-3">
+                <!-- Formulario de Búsqueda y Filtro por Tipo -->
+                <form method="GET" action="{{ route('guia.index') }}" class="mb-6 flex flex-col sm:flex-row gap-3">
                     <input
                         type="search"
                         name="query"
-                        placeholder="Buscar por nombre o palabras en la descripción del patógeno..."
+                        placeholder="Buscar por nombre del patógeno..."
                         value="{{ $query ?? '' }}"
-                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full sm:flex-1"
                     >
+                    <select
+                        name="tipo"
+                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full sm:w-56"
+                    >
+                        <option value="">{{ __('Todos los tipos') }}</option>
+                        @foreach ($tipos as $tipo)
+                            <option value="{{ $tipo->id }}" {{ (int)($tipoId ?? 0) === $tipo->id ? 'selected' : '' }}>
+                                {{ $tipo->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
                         {{ __('Buscar') }}
                     </button>
-                    @if ($query)
+                    @if ($query || $tipoId)
                         <a href="{{ route('guia.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-150 flex items-center">
                             {{ __('Limpiar') }}
                         </a>
@@ -36,11 +47,32 @@
                         'Hongos' => $hongos ?? collect(),
                         'Parásitos' => $parasitos ?? collect(),
                     ];
-                    $typeColors = [
+                    // Color de fondo cuando no hay imagen (placeholder)
+                    $typeBg = [
                         'Virus' => 'bg-red-600',
                         'Bacterias' => 'bg-blue-600',
                         'Hongos' => 'bg-green-600',
-                        'Parásitos' => 'bg-yellow-600',
+                        'Parásitos' => 'bg-amber-600',
+                    ];
+                    // Borde izquierdo de la tarjeta por categoría
+                    $typeBorder = [
+                        'Virus' => 'border-l-4 border-red-500',
+                        'Bacterias' => 'border-l-4 border-blue-500',
+                        'Hongos' => 'border-l-4 border-green-500',
+                        'Parásitos' => 'border-l-4 border-amber-500',
+                    ];
+                    // Fondo y texto del pie de la tarjeta por categoría
+                    $typeCardFooter = [
+                        'Virus' => 'bg-red-50 text-red-900',
+                        'Bacterias' => 'bg-blue-50 text-blue-900',
+                        'Hongos' => 'bg-green-50 text-green-900',
+                        'Parásitos' => 'bg-amber-50 text-amber-900',
+                    ];
+                    $typeLabel = [
+                        'Virus' => 'text-red-600 font-medium',
+                        'Bacterias' => 'text-blue-600 font-medium',
+                        'Hongos' => 'text-green-600 font-medium',
+                        'Parásitos' => 'text-amber-600 font-medium',
                     ];
                 @endphp
 
@@ -49,18 +81,29 @@
                         <div class="mt-10">
                             <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ $title }}</h3>
                             <div class="relative">
-                                <div class="flex space-x-6 overflow-x-auto scrollbar-thin pb-4">
+                                <div class="flex gap-4 sm:gap-6 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin" style="scrollbar-width: thin;">
                                     @foreach ($items as $p)
-                                        <a href="{{ route('guia.show', $p->id) }}" class="flex-none w-64">
-                                            <div class="rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-gray-100">
+                                        @php
+                                            $border = $typeBorder[$title] ?? 'border-l-4 border-gray-400';
+                                            $footer = $typeCardFooter[$title] ?? 'bg-gray-50 text-gray-900';
+                                            $label = $typeLabel[$title] ?? 'text-gray-600';
+                                            $placeholderBg = $typeBg[$title] ?? 'bg-indigo-600';
+                                        @endphp
+                                        <a href="{{ route('guia.show', $p->id) }}" class="flex-none w-56 min-w-[200px] sm:w-64">
+                                            <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-white {{ $border }}">
                                                 @if ($p->image_url)
                                                     <img src="{{ $p->image_url }}" alt="{{ $p->nombre }}" class="h-44 w-full object-cover">
                                                 @else
-                                                    <div class="h-44 w-full flex items-center justify-center {{ $typeColors[$title] ?? 'bg-indigo-600' }} text-white font-semibold">{{ Str::limit($p->nombre, 22) }}</div>
+                                                    <div class="h-44 w-full flex items-center justify-center {{ $placeholderBg }} text-white font-semibold">{{ Str::limit($p->nombre, 22) }}</div>
                                                 @endif
-                                                <div class="p-3">
-                                                    <p class="text-sm text-gray-500">{{ optional($p->tipo)->nombre }}</p>
-                                                    <h4 class="text-base font-semibold text-gray-900 leading-tight truncate">{{ $p->nombre }}</h4>
+                                                @if ($p->alerta_activa)
+                                                    <span class="absolute top-2 right-2 inline-flex items-center px-2 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow">
+                                                        {{ __('ALERTA') }}
+                                                    </span>
+                                                @endif
+                                                <div class="p-3 {{ $footer }}">
+                                                    <p class="text-xs uppercase tracking-wide {{ $label }}">{{ optional($p->tipo)->nombre }}</p>
+                                                    <h4 class="text-base font-semibold leading-tight truncate mt-0.5">{{ $p->nombre }}</h4>
                                                 </div>
                                             </div>
                                         </a>

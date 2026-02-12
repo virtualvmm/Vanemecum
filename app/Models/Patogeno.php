@@ -28,6 +28,8 @@ class Patogeno extends Model
         'image_url',       // Para guardar la ruta de la imagen subida
         'is_active',       // Checkbox de estado activo/inactivo
         'fuente_id',       // Clave foránea 1:N a la fuente de referencia (Opcional)
+        'alerta_activa',   // Indica si el patógeno está en alerta
+        'alerta_texto',    // Mensaje breve de alerta
         // ----------------------------------------------------------------------
     ];
 
@@ -35,7 +37,8 @@ class Patogeno extends Model
      * Define la conversión de tipos (casting) para asegurar la consistencia.
      */
     protected $casts = [
-        'is_active' => 'boolean', // Es fundamental para los checkboxes
+        'is_active' => 'boolean',      // Es fundamental para los checkboxes
+        'alerta_activa' => 'boolean',  // Checkbox de alerta epidemiológica
     ];
 
 

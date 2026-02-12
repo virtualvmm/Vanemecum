@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patogeno;
+use App\Models\TipoPatogeno;
 use Illuminate\Http\Request;
 
 class GuiaController extends Controller
@@ -14,12 +15,17 @@ class GuiaController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('query');
+        $tipoId = $request->input('tipo');
 
         $patogenos = Patogeno::with('tipo')
             ->where('is_active', true)
+            // Búsqueda solo por nombre
             ->when($query, function ($q) use ($query) {
-                $q->where('nombre', 'LIKE', "%{$query}%")
-                  ->orWhere('descripcion', 'LIKE', "%{$query}%");
+                $q->where('nombre', 'LIKE', "%{$query}%");
+            })
+            // Filtro por un único tipo de patógeno (opcional)
+            ->when($tipoId, function ($q) use ($tipoId) {
+                $q->where('tipo_patogeno_id', $tipoId);
             })
             ->orderBy('nombre')
             ->get();
@@ -31,7 +37,18 @@ class GuiaController extends Controller
         $hongos = $byTipo->get('Hongos', collect());
         $parasitos = $byTipo->get('Parásitos', collect());
 
-        return view('guia.index', compact('virus', 'bacterias', 'hongos', 'parasitos', 'query'));
+        // Para el selector de tipo en el filtrado
+        $tipos = TipoPatogeno::orderBy('nombre')->get();
+
+        return view('guia.index', compact(
+            'virus',
+            'bacterias',
+            'hongos',
+            'parasitos',
+            'query',
+            'tipoId',
+            'tipos'
+        ));
     }
 
 
@@ -58,15 +75,23 @@ class GuiaController extends Controller
     public function catalogo(Request $request)
     {
         $query = $request->input('query');
+        $tipoId = $request->input('tipo');
+
         $patogenos = Patogeno::with('tipo')
             ->where('is_active', true)
+            // Búsqueda solo por nombre
             ->when($query, function ($q) use ($query) {
-                $q->where('nombre', 'LIKE', "%{$query}%")
-                  ->orWhere('descripcion', 'LIKE', "%{$query}%");
+                $q->where('nombre', 'LIKE', "%{$query}%");
+            })
+            // Filtro por un único tipo de patógeno (opcional)
+            ->when($tipoId, function ($q) use ($tipoId) {
+                $q->where('tipo_patogeno_id', $tipoId);
             })
             ->orderBy('nombre')
             ->paginate(18);
 
-        return view('guia.catalog', compact('patogenos', 'query'));
+        $tipos = TipoPatogeno::orderBy('nombre')->get();
+
+        return view('guia.catalog', compact('patogenos', 'query', 'tipoId', 'tipos'));
     }
 }

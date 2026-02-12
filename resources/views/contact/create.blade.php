@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <p class="text-gray-600 dark:text-gray-400 mb-6">
                     Use este formulario para reportar un error, sugerir la inclusión de un nuevo patógeno o enviar cualquier consulta. El mensaje se enviará por correo al administrador.
                 </p>

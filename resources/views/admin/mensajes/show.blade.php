@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="p-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="space-y-4">
                     <div>
                         <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Fecha</span>
@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex items-center gap-4">
+                <div class="mt-6 flex flex-wrap items-center gap-3 sm:gap-4">
                     <a href="{{ route('admin.mensajes.index') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
                         ← Volver al listado
                     </a>

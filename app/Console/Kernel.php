@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Sincroniza diariamente las alertas de patógenos con las Disease Outbreak News de la OMS.
+        $schedule->command('alertas:sincronizar-oms')->daily();
     }
 
     /**

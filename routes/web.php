@@ -6,7 +6,8 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\GuiaController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\SintomaController;
-use App\Http\Controllers\Admin\ContactMessageController; 
+use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\AlertaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,16 +69,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // ---------------------------------------------------------------------
-    // RUTAS DEL MÓDULO AUXILIAR: SÍNTOMAS (CRUD)
+    // RUTAS DEL MÓDULO AUXILIAR: SÍNTOMAS, MENSAJES, ALERTAS (SOLO ADMIN)
     // ---------------------------------------------------------------------
-    
-    // Usamos Route::resource para simplificar la creación de las 7 rutas del CRUD (SOLO ADMIN)
     Route::middleware('is_admin')->group(function () {
         Route::resource('admin/sintomas', SintomaController::class)->names('admin.sintomas');
+
         // Mensajes de contacto (formulario de usuarios)
         Route::get('admin/mensajes', [ContactMessageController::class, 'index'])->name('admin.mensajes.index');
         Route::get('admin/mensajes/{mensaje}', [ContactMessageController::class, 'show'])->name('admin.mensajes.show');
         Route::patch('admin/mensajes/{mensaje}/leido', [ContactMessageController::class, 'toggleLeido'])->name('admin.mensajes.toggle-leido');
+
+        // Módulo de Alertas: patógenos con alerta activa
+        Route::get('admin/alertas', [AlertaController::class, 'index'])->name('admin.alertas.index');
     });
     // Nota: El prefijo de URL es /admin/sintomas
     // Las rutas generadas son: admin.sintomas.index, admin.sintomas.create, admin.sintomas.store, etc.

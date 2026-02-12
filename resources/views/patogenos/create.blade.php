@@ -1,7 +1,7 @@
 <x-app-layout>
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-8">
+<div class="py-6 sm:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-6 lg:p-8">
 
             {{-- Botón de Regreso --}}
             <a href="{{ route('patogenos.index') }}" class="text-indigo-600 hover:text-indigo-800 mb-6 inline-flex items-center transition duration-150">
@@ -85,7 +85,7 @@
                         {{-- Campo Is Active (MEJORADO con input hidden) --}}
                         {{-- Input oculto para asegurar que el valor '0' se envíe si el checkbox no está marcado --}}
                         <input type="hidden" name="is_active" value="0">
-                        <div class="flex items-start p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="flex items-start p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4">
                             <div class="flex items-center h-5">
                                 {{-- Por defecto, lo dejamos marcado si no hay old() o si old() es '1' --}}
                                 <input id="is_active" name="is_active" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" value="1" {{ old('is_active') == 1 || old('is_active') === null ? 'checked' : '' }}>
@@ -95,6 +95,26 @@
                                 <p class="text-gray-500 text-xs">{{ __('El patógeno será público por defecto.') }}</p>
                             </div>
                             <x-input-error class="mt-2" :messages="$errors->get('is_active')" />
+                        </div>
+
+                        {{-- Módulo de Alerta Epidemiológica --}}
+                        <div class="p-4 bg-red-50 rounded-lg border border-red-200">
+                            <div class="flex items-start">
+                                {{-- Input oculto para enviar 0 si no está marcada --}}
+                                <input type="hidden" name="alerta_activa" value="0">
+                                <div class="flex items-center h-5">
+                                    <input id="alerta_activa" name="alerta_activa" type="checkbox" class="rounded border-gray-300 text-red-600 shadow-sm focus:ring-red-500" value="1" {{ old('alerta_activa') ? 'checked' : '' }}>
+                                </div>
+                                <div class="ml-3 text-sm w-full">
+                                    <x-input-label for="alerta_activa" :value="__('Alerta epidemiológica por aumento de casos')" class="font-bold text-red-700" />
+                                    <p class="text-red-600 text-xs mb-2">
+                                        {{ __('Marque esta casilla si este patógeno está actualmente en alerta por aumento de incidencia.') }}
+                                    </p>
+                                    <x-input-label for="alerta_texto" :value="__('Mensaje breve de alerta (opcional)')" class="text-xs text-red-700" />
+                                    <textarea id="alerta_texto" name="alerta_texto" rows="3" class="mt-1 block w-full border-red-200 focus:border-red-500 focus:ring-red-500 rounded-md shadow-sm text-sm" placeholder="Ej.: Aumento significativo de casos en la última semana.">{{ old('alerta_texto') }}</textarea>
+                                    <x-input-error class="mt-2" :messages="$errors->get('alerta_texto')" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

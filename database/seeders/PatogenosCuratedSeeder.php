@@ -7,6 +7,7 @@ use App\Models\Sintoma;
 use App\Models\Tratamiento;
 use App\Models\TipoPatogeno;
 use App\Models\TipoTratamiento;
+use App\Models\Fuente;
 use Illuminate\Database\Seeder;
 
 /**
@@ -19,6 +20,7 @@ class PatogenosCuratedSeeder extends Seeder
     {
         $tiposPatogeno = TipoPatogeno::orderBy('id')->pluck('id', 'nombre')->all();
         $tiposTratamiento = TipoTratamiento::orderBy('id')->pluck('id', 'nombre')->all();
+        $fuentes = Fuente::orderBy('id')->pluck('id', 'nombre')->all();
 
         $idVirus    = $tiposPatogeno['Virus'] ?? 1;
         $idBacterias = $tiposPatogeno['Bacterias'] ?? 2;
@@ -29,6 +31,9 @@ class PatogenosCuratedSeeder extends Seeder
         $idAntibiotico = $tiposTratamiento['Antibiótico'] ?? null;
         $idAntifungico = $tiposTratamiento['Antifúngico'] ?? null;
         $idSoporte     = $tiposTratamiento['Soporte'] ?? null;
+
+        // Fuente de información por defecto para todos los patógenos (OMS)
+        $idFuenteOms = $fuentes['OMS'] ?? null;
 
         // --- Tratamientos realistas (firstOrCreate por nombre) ---
         $tratamientos = [];
@@ -568,7 +573,11 @@ class PatogenosCuratedSeeder extends Seeder
 
             $patogeno = Patogeno::updateOrCreate(
                 ['nombre' => $p['nombre']],
-                array_merge($p, ['is_active' => true])
+                array_merge($p, [
+                    'is_active' => true,
+                    // Asigna la fuente de información por defecto si existe
+                    'fuente_id' => $idFuenteOms,
+                ])
             );
 
             $idsTratamientos = collect($tratamientosNombres)->map(function ($nombre) use ($tratamientos) {

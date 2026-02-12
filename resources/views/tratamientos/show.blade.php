@@ -1,6 +1,6 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div class="max-w-4xl mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-6">
             <div class="mb-6">
                 <a href="{{ route('tratamientos.index') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -10,13 +10,24 @@
                 </a>
             </div>
 
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ $tratamiento->nombre }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 break-words">{{ $tratamiento->nombre }}</h1>
+            @php
+                $tipoNombre = $tratamiento->tipo->nombre ?? 'Sin tipo asignado';
+                $tipoClasses = match ($tipoNombre) {
+                    'Antiviral' => 'bg-red-100 text-red-800 border-red-500',
+                    'Antibiótico' => 'bg-blue-100 text-blue-800 border-blue-500',
+                    'Antifúngico' => 'bg-green-100 text-green-800 border-green-500',
+                    'Soporte' => 'bg-amber-100 text-amber-800 border-amber-500',
+                    default => 'bg-gray-100 text-gray-800 border-gray-400',
+                };
+            @endphp
+            <p class="mb-6">
+                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border-l-4 {{ $tipoClasses }}">
+                    {{ $tipoNombre }}
+                </span>
+            </p>
 
             <div class="space-y-4">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-500">Tipo de Tratamiento</h3>
-                    <p class="mt-1 text-lg text-gray-900">{{ $tratamiento->tipo->nombre ?? 'Sin tipo asignado' }}</p>
-                </div>
 
                 @if($tratamiento->descripcion)
                 <div>

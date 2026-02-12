@@ -59,6 +59,10 @@ class UpdatePatogenoRequest extends FormRequest
             
             'is_active' => ['nullable', 'boolean'],
 
+            // Alerta epidemiológica (opcional)
+            'alerta_activa' => ['nullable', 'boolean'],
+            'alerta_texto' => ['nullable', 'string', 'max:500'],
+
             // Relaciones Muchos a Muchos (M:M)
             'tratamientos' => ['nullable', 'array'],
             'tratamientos.*' => ['exists:tratamientos,id'],

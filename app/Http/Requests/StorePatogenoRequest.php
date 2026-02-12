@@ -57,6 +57,10 @@ class StorePatogenoRequest extends FormRequest
             // Campo booleano (checkbox). Puede ser 'null' si no está marcado.
             'is_active' => ['nullable', 'boolean'], 
 
+            // Alerta epidemiológica (opcional)
+            'alerta_activa' => ['nullable', 'boolean'],
+            'alerta_texto' => ['nullable', 'string', 'max:500'],
+
             // Relaciones Muchos a Muchos (arrays de IDs)
             'tratamientos' => ['nullable', 'array'],
             'tratamientos.*' => ['exists:tratamientos,id'], // Cada elemento del array debe existir

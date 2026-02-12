@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-6 lg:p-8">
 
                 {{-- Mensaje de Éxito --}}
                 @if (session('success'))
@@ -28,22 +28,24 @@
 
                 {{-- Búsqueda --}}
                 <div class="mb-6">
-                    <form method="GET" action="{{ route('patogenos.index') }}" class="flex items-center space-x-2">
+                    <form method="GET" action="{{ route('patogenos.index') }}" class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2">
                         <input 
                             type="text" 
                             name="query" 
-                            placeholder="Buscar por nombre o descripción del patógeno..." 
+                            placeholder="Buscar por nombre o descripción..." 
                             value="{{ request('query') }}" 
-                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full md:w-1/3"
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full sm:max-w-xs md:w-64 flex-1"
                         />
-                        <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded shadow-md transition duration-150">
-                            {{ __('Buscar') }}
-                        </button>
-                        @if(request('query'))
-                            <a href="{{ route('patogenos.index') }}" class="text-red-500 hover:text-red-700 p-2" title="Limpiar búsqueda">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </a>
-                        @endif
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded shadow-md transition duration-150">
+                                {{ __('Buscar') }}
+                            </button>
+                            @if(request('query'))
+                                <a href="{{ route('patogenos.index') }}" class="text-red-500 hover:text-red-700 p-2" title="Limpiar búsqueda">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </a>
+                            @endif
+                        </div>
                     </form>
                 </div>
                 

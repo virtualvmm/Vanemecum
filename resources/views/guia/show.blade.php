@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-8">
 
                 {{-- Botón de Regreso al Listado --}}
                 <a href="{{ route('guia.index') }}" class="text-indigo-600 hover:text-indigo-800 mb-6 inline-flex items-center transition duration-150">
@@ -34,11 +34,16 @@
                         {{ $tipoNombre }}
                     </span>
 
-                    <h1 class="text-3xl font-extrabold text-gray-900">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center flex-wrap gap-2">
                         {{-- CRÍTICO: Usamos la columna 'nombre' que sí existe en la tabla --}}
                         {{ $patogeno->nombre }}
+                        @if ($patogeno->alerta_activa)
+                            <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm">
+                                {{ __('ALERTA POR AUMENTO DE CASOS') }}
+                            </span>
+                        @endif
                     </h1>
-                    <p class="text-xl text-gray-600 italic mt-1">
+                    <p class="text-base sm:text-xl text-gray-600 italic mt-1 break-words">
                         ({{ Str::limit($patogeno->descripcion ?? '', 120) ?: 'Sin descripción' }})
                     </p>
                 </div>
@@ -48,7 +53,17 @@
 
                     <!-- SECCIÓN 1: Descripción e información básica -->
                     <div class="border-l-4 border-indigo-500 pl-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('Información General') }}</h2>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">{{ __('Información General') }}</h2>
+                        @if ($patogeno->alerta_activa)
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4">
+                                <h3 class="text-lg font-semibold text-red-700 mb-1">
+                                    {{ __('Alerta epidemiológica por aumento de casos') }}
+                                </h3>
+                                <p class="text-sm text-red-700">
+                                    {{ $patogeno->alerta_texto ?: __('Este patógeno se encuentra actualmente en alerta por aumento de incidencia. Extreme las precauciones y siga las recomendaciones vigentes.') }}
+                                </p>
+                            </div>
+                        @endif
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6 text-gray-700">
                             <p>{{ $patogeno->descripcion ?? 'Sin descripción.' }}</p>
                         </div>
@@ -72,7 +87,7 @@
 
                     <!-- SECCIÓN 2: Síntomas Asociados -->
                     <div class="border-l-4 border-green-500 pl-4 pt-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('Síntomas Comunes') }}</h2>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">{{ __('Síntomas Comunes') }}</h2>
                         {{-- CRÍTICO: Recorremos la relación 'sintomas' --}}
                         @if ($patogeno->sintomas->count() > 0)
                             <ul class="list-disc ml-6 space-y-2 text-gray-700">
@@ -87,7 +102,7 @@
 
                     <!-- SECCIÓN 3: Tratamiento y Farmacología -->
                     <div class="border-l-4 border-red-500 pl-4 pt-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ __('Tratamiento y Farmacología') }}</h2>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">{{ __('Tratamiento y Farmacología') }}</h2>
                         <h3 class="font-medium text-gray-600 mb-2">{{ __('Tratamientos Asociados') }}</h3>
                         
                         {{-- CRÍTICO: Recorremos la relación 'tratamientos' --}}

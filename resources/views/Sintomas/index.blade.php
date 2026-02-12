@@ -1,10 +1,10 @@
 <x-app-layout>
 
-<div class="py-12">
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-<div class="p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+<div class="py-6 sm:py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="p-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
             📚 Listado de Síntomas
         </h2>
         @admin

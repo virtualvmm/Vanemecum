@@ -93,9 +93,10 @@ class PatogenoController extends Controller
             $data['image_url'] = Storage::url($path);
         }
 
-        // 3. Normalizar el checkbox is_active
-        // Si el checkbox no se envía, su valor es false.
+        // 3. Normalizar checkboxes booleanos
+        // Si los checkboxes no se envían, su valor es false.
         $data['is_active'] = $request->boolean('is_active');
+        $data['alerta_activa'] = $request->boolean('alerta_activa');
 
         // 4. Crear el Patógeno (Excluimos las relaciones M:M antes de crear)
         $patogeno = Patogeno::create([
@@ -105,6 +106,8 @@ class PatogenoController extends Controller
             'descripcion'      => $data['descripcion'],
             'image_url'        => $data['image_url'],
             'is_active'        => $data['is_active'],
+            'alerta_activa'    => $data['alerta_activa'],
+            'alerta_texto'     => $data['alerta_texto'] ?? null,
         ]);
 
         // 5. Sincronizar relaciones Muchos a Muchos
@@ -195,6 +198,8 @@ class PatogenoController extends Controller
             'descripcion'      => $data['descripcion'],
             'image_url'        => $imageUrl,
             'is_active'        => $request->boolean('is_active'),
+            'alerta_activa'    => $request->boolean('alerta_activa'),
+            'alerta_texto'     => $data['alerta_texto'] ?? null,
         ]);
 
         // 4. Sincronizar relaciones Muchos a Muchos

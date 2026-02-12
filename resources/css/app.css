@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fondo estilo médico/clínico para la aplicación */
+@layer utilities {
+    .bg-medico {
+        background-color: #e8eef4;
+    }
+}
+
+/* Responsive: evitar scroll horizontal en toda la app */
+@layer base {
+    html {
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+    }
+    body {
+        overflow-x: hidden;
+    }
+}

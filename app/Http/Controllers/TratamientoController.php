@@ -16,24 +16,30 @@ class TratamientoController extends Controller
      */
     public function index(Request $request)
     {
-        // Obtener el término de búsqueda
+        // Obtener el término de búsqueda y el tipo de tratamiento seleccionado
         $search = $request->input('search');
+        $tipoId = $request->input('tipo');
 
-        // Consulta base con paginación
+        // Consulta base con relación al tipo
         $query = Tratamiento::with('tipo');
 
-        // Aplicar filtro: nombre o descripción (para todos los usuarios)
+        // Aplicar filtro: solo por nombre
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nombre', 'like', '%' . $search . '%')
-                  ->orWhere('descripcion', 'like', '%' . $search . '%');
-            });
+            $query->where('nombre', 'like', '%' . $search . '%');
+        }
+
+        // Filtro por un único tipo de tratamiento (opcional)
+        if ($tipoId) {
+            $query->where('tipo_id', $tipoId);
         }
 
         // Obtener resultados paginados (10 por página)
         $tratamientos = $query->orderBy('nombre', 'asc')->paginate(10);
 
-        return view('tratamientos.index', compact('tratamientos', 'search'));
+        // Listado de tipos para el selector
+        $tipos = TipoTratamiento::orderBy('nombre')->get();
+
+        return view('tratamientos.index', compact('tratamientos', 'search', 'tipoId', 'tipos'));
     }
 
     /**
