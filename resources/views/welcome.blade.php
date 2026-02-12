@@ -3,114 +3,57 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('Sistema de Gestión de Patógenos') }}</title>
-    <!-- Incluir Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <title>Vanemecum – {{ __('Consulta de patógenos y tratamientos') }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     <style>
-        /* Fuente Inter */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7fafc; /* Color de fondo claro */
-        }
-        .hero-bg {
-            background: radial-gradient(circle at 20% 20%, #eef2ff, transparent 40%),
-                        radial-gradient(circle at 80% 10%, #e0e7ff, transparent 35%),
-                        radial-gradient(circle at 50% 80%, #f5f3ff, transparent 40%),
-                        #ffffff;
-        }
+        body { font-family: 'Figtree', sans-serif; }
+        .bg-medico { background-color: #e8eef4; }
+        .border-medico { border-color: #c5d4e4; }
+        .text-medico { color: #2c5282; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased bg-medico min-h-screen flex flex-col">
 
-    <div class="min-h-screen flex flex-col justify-between">
-        
-        <!-- Navegación Superior --><header class="p-6 bg-white shadow-md">
-            <nav class="flex justify-between items-center max-w-7xl mx-auto">
-                <a href="{{ url('/') }}" class="flex items-center">
-                    <!-- Logo más grande y sin texto al lado -->
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-24 w-auto object-contain" />
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-12 sm:py-16">
+        <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg border border-medico overflow-hidden">
+            {{-- Franja superior: logo muy grande (rectángulo horizontal) --}}
+            <div class="bg-white border-b-2 border-indigo-100 px-4 sm:px-6 pt-4 pb-4 sm:pt-6 sm:pb-6 text-center">
+                <a href="{{ url('/') }}" class="inline-block focus:outline-none">
+                    <img src="{{ asset('images/logo.png') }}" alt="Vanemecum" class="h-60 sm:h-72 w-auto mx-auto object-contain" />
                 </a>
-                
-                <div class="space-x-4">
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-700 hover:text-indigo-600 transition duration-150">
-                            {{ __('Dashboard') }}
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="font-semibold text-gray-700 hover:text-indigo-600 transition duration-150 py-2 px-3">
-                            {{ __('Entrar (Login)') }}
-                        </a>
+            </div>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150">
-                                {{ __('Darse de Alta') }}
-                            </a>
-                        @endif
-                    @endauth
-                </div>
-            </nav>
-        </header>
-
-        <!-- Sección Principal (Hero) --><main class="flex-grow hero-bg flex items-center justify-center p-6">
-            <div class="max-w-4xl text-center bg-white/90 backdrop-blur-sm p-10 rounded-xl shadow-2xl border border-indigo-100">
-                
-                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-4 leading-tight">
-                    {{ __('Sistema de Gestión de Patógenos y Tratamientos') }}
-                </h1>
-                
-                <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-                    {{ __('Esta plataforma centraliza la información vital sobre agentes patógenos, sus síntomas asociados y los tratamientos recomendados. Está diseñada para administradores de bases de datos biológicas y personal de consulta.') }}
+            <div class="px-8 py-8 text-center">
+                <p class="text-gray-600 leading-relaxed">
+                    {{ __('Información sobre patógenos, síntomas y tratamientos recomendados para profesionales y estudiantes del ámbito sanitario.') }}
                 </p>
-                
-                <div class="mt-8 pt-4 border-t border-gray-200">
-                    <h2 class="text-2xl font-semibold text-indigo-700 mb-4">{{ __('Acceso y Roles') }}</h2>
-                    <p class="text-md text-gray-600">
-                        {{ __('Ofrecemos dos niveles de acceso según sus necesidades:') }}
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4">
-                        <a href="{{ route('login', ['email' => 'admin@example.com']) }}" class="p-4 rounded-xl bg-indigo-50 border border-indigo-200 w-full sm:w-56 shadow-md transition duration-300 hover:shadow-lg">
-                            <p class="font-bold text-lg text-indigo-800">{{ __('ADMINISTRADOR') }}</p>
-                            <p class="text-sm text-indigo-600">{{ __('Gestión y edición completa (CRUD).') }}</p>
-                            <p class="mt-2 text-xs text-indigo-500">Email: admin@example.com · Pass: 12345678</p>
-                        </a>
-                        <div class="p-4 rounded-xl bg-gray-100 border border-gray-300 w-full sm:w-56 shadow-md transition duration-300 hover:shadow-lg">
-                            <p class="font-bold text-lg text-gray-700">{{ __('USUARIO') }}</p>
-                            <p class="text-sm text-gray-500">{{ __('Solo acceso de lectura y consulta de datos.') }}</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
                     @guest
-                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform hover:scale-[1.02]">
-                            {{ __('Entrar en el Sistema') }}
+                        <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                            {{ __('Entrar') }}
                         </a>
-
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-3 border border-indigo-600 text-base font-medium rounded-xl text-indigo-700 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
-                                {{ __('Crear una Cuenta') }}
+                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl text-base font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition">
+                                {{ __('Crear cuenta') }}
                             </a>
                         @endif
                     @endguest
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform hover:scale-[1.02]">
-                            {{ __('Ir al Dashboard') }}
+                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                            {{ __('Ir al inicio') }}
                         </a>
                     @endauth
                 </div>
-
             </div>
-            <img src="{{ asset('images/logo.png') }}" alt="Marca de agua" class="watermark h-72 w-auto">
-        </main>
+        </div>
+    </main>
 
-        <!-- Pie de Página --><footer class="p-4 bg-gray-800 text-center text-gray-400 text-sm">
-            <div class="max-w-7xl mx-auto">
-                <p>&copy; {{ date('Y') }} BioAdmin. {{ __('Todos los derechos reservados.') }}</p>
-                <p class="mt-1">{{ __('Desarrollado con Laravel y Tailwind CSS.') }}</p>
-            </div>
-        </footer>
-
-    </div>
+    <footer class="py-4 text-center text-sm text-gray-500">
+        <p>&copy; {{ date('Y') }} Vanemecum. {{ __('Todos los derechos reservados.') }}</p>
+    </footer>
 
 </body>
 </html>

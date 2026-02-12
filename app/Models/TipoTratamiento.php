@@ -24,6 +24,30 @@ class TipoTratamiento extends Model
     {
         return $this->hasMany(Tratamiento::class, 'tipo_id');
     }
+
+    /** Clases CSS para badge por tipo de tratamiento. */
+    public function badgeClass(): string
+    {
+        return match ($this->nombre ?? '') {
+            'Antiviral' => 'bg-red-100 text-red-800 border-red-500',
+            'Antibiótico' => 'bg-blue-100 text-blue-800 border-blue-500',
+            'Antifúngico' => 'bg-green-100 text-green-800 border-green-500',
+            'Soporte' => 'bg-amber-100 text-amber-800 border-amber-500',
+            default => 'bg-gray-100 text-gray-800 border-gray-400',
+        };
+    }
+
+    /** Borde izquierdo para fila. */
+    public function rowBorderClass(): string
+    {
+        return match ($this->nombre ?? '') {
+            'Antiviral' => 'border-l-4 border-red-500',
+            'Antibiótico' => 'border-l-4 border-blue-500',
+            'Antifúngico' => 'border-l-4 border-green-500',
+            'Soporte' => 'border-l-4 border-amber-500',
+            default => 'border-l-4 border-gray-400',
+        };
+    }
 }
 
 

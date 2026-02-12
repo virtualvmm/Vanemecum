@@ -16,7 +16,7 @@
     </head>
     <body class="font-sans antialiased">
         {{-- Fondo con tono médico: azul-gris suave (estilo clínico/sanitario) --}}
-        <div class="min-h-screen bg-medico dark:bg-gray-900">
+        <div class="min-h-screen bg-medico dark:bg-gray-900 flex flex-col">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -29,9 +29,14 @@
             @endif
 
             <!-- Page Content: padding responsive para móvil, tablet y desktop -->
-            <main class="w-full overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+            <main class="w-full flex-grow overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 {{ $slot }}
             </main>
+
+            <!-- Pie de página en todas las páginas -->
+            <footer class="py-3 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50">
+                <p>&copy; {{ date('Y') }} Vanemecum. {{ __('Todos los derechos reservados.') }}</p>
+            </footer>
         </div>
     </body>
 </html>

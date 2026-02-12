@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Eliminar tabla failed_jobs: esta app no usa colas (queues).
      */
-    public function up()
+    public function up(): void
+    {
+        Schema::dropIfExists('failed_jobs');
+    }
+
+    public function down(): void
     {
         Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
@@ -22,15 +25,5 @@ return new class extends Migration
             $table->longText('exception');
             $table->timestamp('failed_at')->useCurrent();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('failed_jobs');
     }
 };

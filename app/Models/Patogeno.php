@@ -37,10 +37,28 @@ class Patogeno extends Model
      * Define la conversión de tipos (casting) para asegurar la consistencia.
      */
     protected $casts = [
-        'is_active' => 'boolean',      // Es fundamental para los checkboxes
-        'alerta_activa' => 'boolean',  // Checkbox de alerta epidemiológica
+        'is_active' => 'boolean',
+        'alerta_activa' => 'boolean',
     ];
 
+    /* ----------------------------------------------------------------------
+     * SCOPES
+     * ---------------------------------------------------------------------- */
+
+    /** Patógenos activos (visibles en guía/catálogo). */
+    public function scopeActivos($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /** Filtro por nombre y tipo para guía/catálogo. */
+    public function scopeFiltradoGuia($query, ?string $search = null, $tipoId = null)
+    {
+        return $query
+            ->when($search, fn ($q) => $q->where('nombre', 'LIKE', "%{$search}%"))
+            ->when($tipoId, fn ($q) => $q->where('tipo_patogeno_id', $tipoId))
+            ->orderBy('nombre');
+    }
 
     /* ----------------------------------------------------------------------
      * RELACIONES N:1 (Pertenece a)
@@ -94,5 +112,16 @@ class Patogeno extends Model
     {
         // Usa la tabla pivote que definiste en la migración.
         return $this->belongsToMany(Tratamiento::class, 'patogeno_tratamiento');
+    }
+
+    /**
+     * Relación N:M: usuarios que tienen este patógeno como favorito (tabla pivote: patogeno_user).
+     *
+     * @return BelongsToMany
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'patogeno_user', 'patogeno_id', 'user_id')
+            ->withTimestamps();
     }
 }

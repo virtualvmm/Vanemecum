@@ -68,30 +68,13 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($tratamientos as $tratamiento)
-                            @php
-                                $tipoNombre = $tratamiento->tipo->nombre ?? 'Sin Tipo';
-                                $rowBorder = match ($tipoNombre) {
-                                    'Antiviral' => 'border-l-4 border-red-500',
-                                    'Antibiótico' => 'border-l-4 border-blue-500',
-                                    'Antifúngico' => 'border-l-4 border-green-500',
-                                    'Soporte' => 'border-l-4 border-amber-500',
-                                    default => 'border-l-4 border-gray-400',
-                                };
-                            @endphp
-                            <tr class="{{ $rowBorder }}">
+                            <tr class="{{ $tratamiento->tipo?->rowBorderClass() ?? 'border-l-4 border-gray-400' }}">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {{ $tratamiento->nombre }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                        @switch($tipoNombre)
-                                            @case('Antiviral') bg-red-100 text-red-800 @break
-                                            @case('Antibiótico') bg-blue-100 text-blue-800 @break
-                                            @case('Antifúngico') bg-green-100 text-green-800 @break
-                                            @case('Soporte') bg-amber-100 text-amber-800 @break
-                                            @default bg-gray-100 text-gray-800
-                                        @endswitch">
-                                        {{ $tipoNombre }}
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $tratamiento->tipo?->badgeClass() ?? 'bg-gray-100 text-gray-800' }}">
+                                        {{ $tratamiento->tipo?->nombre ?? 'Sin tipo' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 max-w-[280px] sm:max-w-md whitespace-normal align-top break-words" title="{{ $tratamiento->descripcion }}">

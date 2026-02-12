@@ -47,35 +47,7 @@
                         'Hongos' => $hongos ?? collect(),
                         'Parásitos' => $parasitos ?? collect(),
                     ];
-                    // Color de fondo cuando no hay imagen (placeholder)
-                    $typeBg = [
-                        'Virus' => 'bg-red-600',
-                        'Bacterias' => 'bg-blue-600',
-                        'Hongos' => 'bg-green-600',
-                        'Parásitos' => 'bg-amber-600',
-                    ];
-                    // Borde izquierdo de la tarjeta por categoría
-                    $typeBorder = [
-                        'Virus' => 'border-l-4 border-red-500',
-                        'Bacterias' => 'border-l-4 border-blue-500',
-                        'Hongos' => 'border-l-4 border-green-500',
-                        'Parásitos' => 'border-l-4 border-amber-500',
-                    ];
-                    // Fondo y texto del pie de la tarjeta por categoría
-                    $typeCardFooter = [
-                        'Virus' => 'bg-red-50 text-red-900',
-                        'Bacterias' => 'bg-blue-50 text-blue-900',
-                        'Hongos' => 'bg-green-50 text-green-900',
-                        'Parásitos' => 'bg-amber-50 text-amber-900',
-                    ];
-                    $typeLabel = [
-                        'Virus' => 'text-red-600 font-medium',
-                        'Bacterias' => 'text-blue-600 font-medium',
-                        'Hongos' => 'text-green-600 font-medium',
-                        'Parásitos' => 'text-amber-600 font-medium',
-                    ];
                 @endphp
-
                 @foreach ($sections as $title => $items)
                     @if ($items->count())
                         <div class="mt-10">
@@ -83,26 +55,20 @@
                             <div class="relative">
                                 <div class="flex gap-4 sm:gap-6 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin" style="scrollbar-width: thin;">
                                     @foreach ($items as $p)
-                                        @php
-                                            $border = $typeBorder[$title] ?? 'border-l-4 border-gray-400';
-                                            $footer = $typeCardFooter[$title] ?? 'bg-gray-50 text-gray-900';
-                                            $label = $typeLabel[$title] ?? 'text-gray-600';
-                                            $placeholderBg = $typeBg[$title] ?? 'bg-indigo-600';
-                                        @endphp
                                         <a href="{{ route('guia.show', $p->id) }}" class="flex-none w-56 min-w-[200px] sm:w-64">
-                                            <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-white {{ $border }}">
+                                            <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-white {{ $p->tipo?->borderClass() ?? 'border-l-4 border-gray-400' }}">
                                                 @if ($p->image_url)
                                                     <img src="{{ $p->image_url }}" alt="{{ $p->nombre }}" class="h-44 w-full object-cover">
                                                 @else
-                                                    <div class="h-44 w-full flex items-center justify-center {{ $placeholderBg }} text-white font-semibold">{{ Str::limit($p->nombre, 22) }}</div>
+                                                    <div class="h-44 w-full flex items-center justify-center {{ $p->tipo?->placeholderBgClass() ?? 'bg-gray-500' }} text-white font-semibold">{{ Str::limit($p->nombre, 22) }}</div>
                                                 @endif
                                                 @if ($p->alerta_activa)
                                                     <span class="absolute top-2 right-2 inline-flex items-center px-2 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow">
                                                         {{ __('ALERTA') }}
                                                     </span>
                                                 @endif
-                                                <div class="p-3 {{ $footer }}">
-                                                    <p class="text-xs uppercase tracking-wide {{ $label }}">{{ optional($p->tipo)->nombre }}</p>
+                                                <div class="p-3 {{ $p->tipo?->cardFooterClass() ?? 'bg-gray-50 text-gray-900' }}">
+                                                    <p class="text-xs uppercase tracking-wide {{ $p->tipo?->labelClass() ?? 'text-gray-600 font-medium' }}">{{ optional($p->tipo)->nombre }}</p>
                                                     <h4 class="text-base font-semibold leading-tight truncate mt-0.5">{{ $p->nombre }}</h4>
                                                 </div>
                                             </div>

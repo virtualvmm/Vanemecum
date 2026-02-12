@@ -9,43 +9,58 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 sm:p-8">
 
-                {{-- Botón de Regreso al Listado --}}
-                <a href="{{ route('guia.index') }}" class="text-indigo-600 hover:text-indigo-800 mb-6 inline-flex items-center transition duration-150">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    {{ __('Volver al listado') }}
-                </a>
-
-                <!-- Encabezado del Patógeno -->
-                <div class="mt-4 border-b pb-4">
-                    <!-- Tipo de Patógeno (Clasificación): Viene de la relación 'tipo' -->
-                    @php
-                        // Colores según tipo (nombres deben coincidir con tipo_patogenos: Virus, Bacterias, Hongos, Parásitos)
-                        $tipoNombre = optional($patogeno->tipo)->nombre ?? 'Desconocido';
-                        $colorClass = match ($tipoNombre) {
-                            'Virus' => 'bg-red-100 text-red-800',
-                            'Bacterias' => 'bg-blue-100 text-blue-800',
-                            'Hongos' => 'bg-green-100 text-green-800',
-                            'Parásitos' => 'bg-yellow-100 text-yellow-800',
-                            default => 'bg-gray-100 text-gray-800',
-                        };
-                    @endphp
-
-                    <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full {{ $colorClass }} mb-2">
-                        {{ $tipoNombre }}
-                    </span>
-
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 flex items-center flex-wrap gap-2">
-                        {{-- CRÍTICO: Usamos la columna 'nombre' que sí existe en la tabla --}}
-                        {{ $patogeno->nombre }}
-                        @if ($patogeno->alerta_activa)
-                            <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm">
-                                {{ __('ALERTA POR AUMENTO DE CASOS') }}
-                            </span>
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <a href="{{ route('guia.index') }}" class="text-indigo-600 hover:text-indigo-800 inline-flex items-center transition duration-150">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        {{ __('Volver al listado') }}
+                    </a>
+                    @auth
+                        @if ($esFavorito ?? false)
+                            <form action="{{ route('favoritos.destroy', $patogeno) }}" method="POST" class="inline ml-auto sm:ml-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 transition">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+                                    {{ __('Quitar de Mis patógenos') }}
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('favoritos.store', $patogeno) }}" method="POST" class="inline ml-auto sm:ml-0">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-300 dark:hover:bg-indigo-900/50 transition">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    {{ __('Guardar en Mis patógenos') }}
+                                </button>
+                            </form>
                         @endif
-                    </h1>
-                    <p class="text-base sm:text-xl text-gray-600 italic mt-1 break-words">
-                        ({{ Str::limit($patogeno->descripcion ?? '', 120) ?: 'Sin descripción' }})
-                    </p>
+                    @endauth
+                </div>
+
+                {{-- Cabecera: imagen a toda la anchura con el nombre encima y fondo clarito --}}
+                <div class="relative -mx-4 -mt-2 sm:-mx-8 sm:-mt-2 rounded-t-xl sm:rounded-t-lg overflow-hidden h-52 sm:h-64">
+                    @if ($patogeno->image_url)
+                        <img src="{{ $patogeno->image_url }}" alt="{{ $patogeno->nombre }}" class="absolute inset-0 w-full h-full object-cover">
+                    @else
+                        <div class="absolute inset-0 w-full h-full {{ optional($patogeno->tipo)->placeholderBgClass() ?? 'bg-gray-500' }} flex items-center justify-center">
+                            <span class="text-white/40 text-4xl font-bold">{{ Str::limit($patogeno->nombre, 25) }}</span>
+                        </div>
+                    @endif
+                    <div class="absolute inset-x-0 bottom-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-4 sm:px-6 py-4 pt-8">
+                        <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full {{ optional($patogeno->tipo)->badgeClass() ?? 'bg-gray-100 text-gray-800' }} mb-2">
+                            {{ optional($patogeno->tipo)->nombre ?? __('Desconocido') }}
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-gray-100 flex items-center flex-wrap gap-2">
+                            {{ $patogeno->nombre }}
+                            @if ($patogeno->alerta_activa)
+                                <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm">
+                                    {{ __('ALERTA POR AUMENTO DE CASOS') }}
+                                </span>
+                            @endif
+                        </h1>
+                        <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 italic mt-1 break-words">
+                            ({{ Str::limit($patogeno->descripcion ?? '', 100) ?: 'Sin descripción' }})
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Contenido Detallado: Organizado por Secciones -->

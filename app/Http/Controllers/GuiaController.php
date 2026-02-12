@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 class GuiaController extends Controller
 {
     /**
-     * Muestra el índice (la página principal) de la Guía de Patógenos (Vanemecum).
-     * Una sola consulta a BD; se agrupa por tipo en PHP para los carruseles.
+     * Índice de la Guía: una consulta, agrupada por tipo para los carruseles.
      */
     public function index(Request $request)
     {
@@ -18,37 +17,22 @@ class GuiaController extends Controller
         $tipoId = $request->input('tipo');
 
         $patogenos = Patogeno::with('tipo')
-            ->where('is_active', true)
-            // Búsqueda solo por nombre
-            ->when($query, function ($q) use ($query) {
-                $q->where('nombre', 'LIKE', "%{$query}%");
-            })
-            // Filtro por un único tipo de patógeno (opcional)
-            ->when($tipoId, function ($q) use ($tipoId) {
-                $q->where('tipo_patogeno_id', $tipoId);
-            })
-            ->orderBy('nombre')
+            ->activos()
+            ->filtradoGuia($query, $tipoId)
             ->get();
 
-        // Agrupar por nombre del tipo (una sola consulta ya hecha)
         $byTipo = $patogenos->groupBy(fn ($p) => $p->tipo?->nombre ?? 'Otros');
-        $virus = $byTipo->get('Virus', collect());
-        $bacterias = $byTipo->get('Bacterias', collect());
-        $hongos = $byTipo->get('Hongos', collect());
-        $parasitos = $byTipo->get('Parásitos', collect());
-
-        // Para el selector de tipo en el filtrado
         $tipos = TipoPatogeno::orderBy('nombre')->get();
 
-        return view('guia.index', compact(
-            'virus',
-            'bacterias',
-            'hongos',
-            'parasitos',
-            'query',
-            'tipoId',
-            'tipos'
-        ));
+        return view('guia.index', [
+            'virus' => $byTipo->get('Virus', collect()),
+            'bacterias' => $byTipo->get('Bacterias', collect()),
+            'hongos' => $byTipo->get('Hongos', collect()),
+            'parasitos' => $byTipo->get('Parásitos', collect()),
+            'query' => $query,
+            'tipoId' => $tipoId,
+            'tipos' => $tipos,
+        ]);
     }
 
 
@@ -60,17 +44,16 @@ class GuiaController extends Controller
      */
     public function show(Patogeno $patogeno)
     {
-        // Route Model Binding ya carga el patógeno; eager load de relaciones para la ficha.
         $patogeno->load('tipo', 'tratamientos', 'sintomas', 'fuente');
 
-        // Devolver la vista de detalle, pasando el objeto patogeno completo.
-        return view('guia.show', [
-            'patogeno' => $patogeno,
-        ]);
+        $user = auth()->user();
+        $esFavorito = $user ? $user->patogenos()->where('patogenos.id', $patogeno->id)->exists() : false;
+
+        return view('guia.show', compact('patogeno', 'esFavorito'));
     }
 
     /**
-     * Catálogo público de todos los patógenos en cuadrícula.
+     * Catálogo público en cuadrícula (paginado).
      */
     public function catalogo(Request $request)
     {
@@ -78,16 +61,8 @@ class GuiaController extends Controller
         $tipoId = $request->input('tipo');
 
         $patogenos = Patogeno::with('tipo')
-            ->where('is_active', true)
-            // Búsqueda solo por nombre
-            ->when($query, function ($q) use ($query) {
-                $q->where('nombre', 'LIKE', "%{$query}%");
-            })
-            // Filtro por un único tipo de patógeno (opcional)
-            ->when($tipoId, function ($q) use ($tipoId) {
-                $q->where('tipo_patogeno_id', $tipoId);
-            })
-            ->orderBy('nombre')
+            ->activos()
+            ->filtradoGuia($query, $tipoId)
             ->paginate(18);
 
         $tipos = TipoPatogeno::orderBy('nombre')->get();

@@ -5,6 +5,7 @@ use App\Http\Controllers\PatogenoController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\GuiaController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FavoritoController;
 use App\Http\Controllers\Admin\SintomaController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\AlertaController;
@@ -106,6 +107,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/guia/{patogeno}', [GuiaController::class, 'show'])->name('guia.show');
     // Catálogo público completo
     Route::get('/catalogo', [GuiaController::class, 'catalogo'])->name('catalogo.index');
+
+    // Mis patógenos (favoritos) - todos los usuarios autenticados
+    Route::get('/mis-patogenos', [FavoritoController::class, 'index'])->name('favoritos.index');
+    Route::post('/mis-patogenos/{patogeno}', [FavoritoController::class, 'store'])->name('favoritos.store');
+    Route::delete('/mis-patogenos/{patogeno}', [FavoritoController::class, 'destroy'])->name('favoritos.destroy');
 
     // Contacto: reportar error, sugerir patógeno, etc. (envía email al admin)
     Route::get('/contacto', [ContactController::class, 'create'])->name('contact.create');

@@ -32,11 +32,10 @@ class AuxiliarSeeder extends Seeder
         ];
         DB::table('tipo_tratamientos')->insertOrIgnore($tiposTratamientos);
 
-        // 3. Roles de Usuario
+        // 3. Roles de Usuario (solo Admin y User)
         $roles = [
-            ['nombre' => 'Administrador', 'descripcion' => 'Control total sobre el sistema y el contenido.'],
-            ['nombre' => 'Editor', 'descripcion' => 'Puede crear y modificar contenido (Patógenos, Tratamientos).'],
-            ['nombre' => 'Lector', 'descripcion' => 'Solo puede ver el contenido del Vademécum.'],
+            ['nombre' => 'Admin', 'descripcion' => 'Administrador del sistema. Control total.'],
+            ['nombre' => 'User', 'descripcion' => 'Usuario estándar. Consulta de patógenos y tratamientos.'],
         ];
         DB::table('roles')->insertOrIgnore($roles);
 

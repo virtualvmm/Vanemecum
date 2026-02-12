@@ -40,16 +40,6 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @forelse ($patogenos as $p)
-                        @php
-                            $tipo = optional($p->tipo)->nombre;
-                            $badge = match ($tipo) {
-                                'Virus' => 'bg-red-100 text-red-800',
-                                'Bacterias' => 'bg-blue-100 text-blue-800',
-                                'Hongos' => 'bg-green-100 text-green-800',
-                                'Parásitos' => 'bg-yellow-100 text-yellow-800',
-                                default => 'bg-gray-100 text-gray-800',
-                            };
-                        @endphp
                         <a href="{{ route('guia.show', $p->id) }}" class="block">
                             <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-gray-50 border border-gray-200">
                                 @if ($p->image_url)
@@ -58,7 +48,7 @@
                                     <div class="h-40 w-full flex items-center justify-center bg-gray-200 text-gray-600 font-semibold">{{ Str::limit($p->nombre, 20) }}</div>
                                 @endif
                                 <div class="p-4">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badge }}">{{ $tipo ?? 'N/A' }}</span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $p->tipo?->badgeClass() ?? 'bg-gray-100 text-gray-800' }}">{{ optional($p->tipo)->nombre ?? 'N/A' }}</span>
                                     <h3 class="mt-2 text-lg font-bold text-gray-900 truncate">{{ $p->nombre }}</h3>
                                     @if ($p->alerta_activa)
                                         <p class="mt-1 text-xs font-semibold text-red-600">

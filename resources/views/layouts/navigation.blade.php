@@ -36,6 +36,9 @@
                     <x-nav-link :href="route('guia.index')" :active="request()->routeIs('guia.index')">
                         {{ __('Guía Rápida') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('favoritos.index')" :active="request()->routeIs('favoritos.*')">
+                        {{ __('Mis patógenos') }}
+                    </x-nav-link>
                     @admin
                         <x-nav-link :href="route('admin.mensajes.index')" :active="request()->routeIs('admin.mensajes.*')" class="inline-flex items-center gap-1.5">
                             {{ __('Mensajes') }}
@@ -120,6 +123,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('guia.index')" :active="request()->routeIs('guia.index')">
                 {{ __('Guía Rápida') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('favoritos.index')" :active="request()->routeIs('favoritos.*')">
+                {{ __('Mis patógenos') }}
             </x-responsive-nav-link>
             @admin
                 <x-responsive-nav-link :href="route('admin.mensajes.index')" :active="request()->routeIs('admin.mensajes.*')">

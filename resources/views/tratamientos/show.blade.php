@@ -11,19 +11,9 @@
             </div>
 
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 break-words">{{ $tratamiento->nombre }}</h1>
-            @php
-                $tipoNombre = $tratamiento->tipo->nombre ?? 'Sin tipo asignado';
-                $tipoClasses = match ($tipoNombre) {
-                    'Antiviral' => 'bg-red-100 text-red-800 border-red-500',
-                    'Antibiótico' => 'bg-blue-100 text-blue-800 border-blue-500',
-                    'Antifúngico' => 'bg-green-100 text-green-800 border-green-500',
-                    'Soporte' => 'bg-amber-100 text-amber-800 border-amber-500',
-                    default => 'bg-gray-100 text-gray-800 border-gray-400',
-                };
-            @endphp
             <p class="mb-6">
-                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border-l-4 {{ $tipoClasses }}">
-                    {{ $tipoNombre }}
+                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold border-l-4 {{ $tratamiento->tipo?->badgeClass() ?? 'bg-gray-100 text-gray-800 border-gray-400' }}">
+                    {{ $tratamiento->tipo?->nombre ?? 'Sin tipo asignado' }}
                 </span>
             </p>
 

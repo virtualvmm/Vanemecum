@@ -12,7 +12,7 @@ class TestUserSeeder extends Seeder
     public function run(): void
     {
         $userRole = Rol::firstOrCreate(
-            ['nombre' => 'Usuario'],
+            ['nombre' => 'User'],
             ['descripcion' => 'Usuario estándar']
         );
 
