@@ -6,22 +6,20 @@
 <nav x-data="{ open: false }" class="bg-indigo-50 border-b border-indigo-100 dark:bg-indigo-950/40 dark:border-indigo-800/50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-20">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center">
-                        <x-application-logo class="block h-14 sm:h-16 lg:h-20 w-auto" />
-                    </a>
-                </div>
+        <div class="flex items-center justify-between h-20 gap-4">
+            <!-- Logo (izquierda) -->
+            <div class="shrink-0 flex items-center">
+                <a href="{{ route('dashboard') }}" class="flex items-center">
+                    <x-application-logo class="block h-14 sm:h-16 lg:h-20 w-auto" />
+                </a>
+            </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+            <!-- Enlaces de navegación (centrados en el banner) -->
+            <div class="hidden flex-1 sm:flex items-center justify-center">
+                <div class="flex items-center sm:-my-px space-x-6 lg:space-x-8">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Bienvenido') }}
                     </x-nav-link>
-
-                    {{-- AÑADIMOS ESTOS ENLACES CLAVE --}}
                     @admin
                         <x-nav-link :href="route('patogenos.index')" :active="request()->routeIs('patogenos.*')">
                             {{ __('Micro-DB (Patógenos)') }}
@@ -56,8 +54,8 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <!-- Usuario / dropdown (derecha) -->
+            <div class="hidden sm:flex sm:items-center shrink-0">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-indigo-200/50 dark:border-indigo-700/50 text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-300 bg-indigo-100/50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-800/50 focus:outline-none transition ease-in-out duration-150">

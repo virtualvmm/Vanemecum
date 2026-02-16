@@ -27,11 +27,12 @@ class ContactMessageController extends Controller
     }
 
     /**
-     * Ver un mensaje y marcarlo como leído.
+     * Ver un mensaje. Lo marca como leído solo si se entra desde el listado (no al volver desde el toggle).
      */
     public function show(ContactMessage $mensaje): View|RedirectResponse
     {
-        if ($mensaje->exists && ! $mensaje->leido) {
+        $vieneDelToggle = request()->boolean('from_toggle');
+        if ($mensaje->exists && ! $mensaje->leido && ! $vieneDelToggle) {
             $mensaje->update(['leido' => true]);
         }
 
@@ -45,6 +46,9 @@ class ContactMessageController extends Controller
     {
         $mensaje->update(['leido' => ! $mensaje->leido]);
 
-        return back()->with('success', $mensaje->leido ? 'Mensaje marcado como leído.' : 'Mensaje marcado como no leído.');
+        $message = $mensaje->leido ? 'Mensaje marcado como leído.' : 'Mensaje marcado como no leído.';
+
+        return redirect()->route('admin.mensajes.show', ['mensaje' => $mensaje, 'from_toggle' => 1])
+            ->with('success', $message);
     }
 }

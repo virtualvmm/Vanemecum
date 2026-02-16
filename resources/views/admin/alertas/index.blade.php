@@ -21,7 +21,8 @@
                                 name="search"
                                 value="{{ request('search') }}"
                                 placeholder="{{ __('Buscar por nombre de patógeno...') }}"
-                                class="w-full sm:w-64 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                title="{{ __('Buscar por nombre de patógeno...') }}"
+                                class="w-full min-w-0 sm:w-80 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             >
                             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded-md">
                                 {{ __('Buscar') }}

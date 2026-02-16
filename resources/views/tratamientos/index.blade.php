@@ -61,9 +61,11 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Descripción Breve
                             </th>
+                            @admin
                             <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Acciones
                             </th>
+                            @endadmin
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -80,26 +82,24 @@
                                 <td class="px-6 py-4 text-sm text-gray-500 max-w-[280px] sm:max-w-md whitespace-normal align-top break-words" title="{{ $tratamiento->descripcion }}">
                                     {{ $tratamiento->descripcion ? Str::limit($tratamiento->descripcion, 120) : '—' }}
                                 </td>
+                                @admin
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                    @admin
-                                        <!-- Botón Editar -->
-                                        <a href="{{ route('tratamientos.edit', $tratamiento->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                            Editar
-                                        </a>
-                                        <!-- Botón Eliminar (Formulario) -->
-                                        <form action="{{ route('tratamientos.destroy', $tratamiento->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tratamiento? Esta acción es irreversible.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-2">
-                                                Eliminar
-                                            </button>
-                                        </form>
-                                    @endadmin
+                                    <a href="{{ route('tratamientos.edit', $tratamiento->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('tratamientos.destroy', $tratamiento->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tratamiento? Esta acción es irreversible.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 ml-2">
+                                            Eliminar
+                                        </button>
+                                    </form>
                                 </td>
+                                @endadmin
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-8 whitespace-nowrap text-center text-lg text-gray-500">
+                                <td colspan="{{ auth()->user() && auth()->user()->hasRole('Admin') ? 4 : 3 }}" class="px-6 py-8 whitespace-nowrap text-center text-lg text-gray-500">
                                     No se encontraron tratamientos.
                                 </td>
                             </tr>

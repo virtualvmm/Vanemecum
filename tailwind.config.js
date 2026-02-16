@@ -8,6 +8,12 @@ module.exports = {
         './resources/views/**/*.blade.php',
     ],
 
+    // Clases usadas dinámicamente desde modelos (TipoTratamiento, TipoPatogeno) para que Tailwind las genere
+    safelist: [
+        { pattern: /^(bg|text|border)-(red|blue|green|amber|yellow|gray)-(100|200|400|500|600|800|900)$/ },
+        { pattern: /^border-l-4$/ },
+    ],
+
     theme: {
         extend: {
             fontFamily: {
