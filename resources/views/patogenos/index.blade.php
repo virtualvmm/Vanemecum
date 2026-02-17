@@ -72,7 +72,7 @@
                                         {{-- Celda de Imagen --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             @if ($patogeno->image_url)
-                                                <img src="{{ $patogeno->image_url }}" alt="{{ $patogeno->nombre }}" class="h-10 w-10 object-cover rounded-full shadow">
+                                                <img src="{{ asset($patogeno->image_url) }}" alt="{{ $patogeno->nombre }}" class="h-10 w-10 object-cover rounded-full shadow">
                                             @else
                                                 <div class="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-500">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-1.586-1.586a2 2 0 00-2.828 0L10 18m0 0l-4-4"></path></svg>

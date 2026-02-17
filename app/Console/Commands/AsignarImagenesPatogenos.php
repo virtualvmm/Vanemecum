@@ -5,11 +5,14 @@ namespace App\Console\Commands;
 use App\Models\Patogeno;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class AsignarImagenesPatogenos extends Command
 {
-    protected $signature = 'patogenos:asignar-imagenes';
-    protected $description = 'Asigna las imágenes de public/images/patogenos a patógenos por coincidencia de nombre (nombre del archivo sin extensión = nombre del patógeno).';
+    protected $signature = 'patogenos:asignar-imagenes
+                            {--report : Solo listar patógenos sin imagen e imágenes sin asignar}';
+
+    protected $description = 'Asigna las imágenes de public/images/patogenos a patógenos por coincidencia de nombre.';
 
     public function handle(): int
     {
@@ -20,8 +23,28 @@ class AsignarImagenesPatogenos extends Command
             return self::FAILURE;
         }
 
+        $todosPatogenos = Patogeno::orderBy('nombre')->get();
+        $patogenosPorNombre = $todosPatogenos->keyBy('nombre');
+        $patogenosPorNormalizado = $todosPatogenos->keyBy(fn (Patogeno $p) => $this->normalizarNombre($p->nombre));
+
         $archivos = File::files($carpeta);
         $extensiones = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+        if ($this->option('report')) {
+            $conImagen = $todosPatogenos->filter(fn (Patogeno $p) => !empty(trim((string) $p->image_url)));
+            $sinImagen = $todosPatogenos->filter(fn (Patogeno $p) => empty(trim((string) $p->image_url)));
+            $this->info('Patógenos con imagen: ' . $conImagen->count());
+            $this->info('Patógenos SIN imagen: ' . $sinImagen->count());
+            if ($sinImagen->isNotEmpty()) {
+                $this->newLine();
+                $this->warn('Patógenos sin foto:');
+                foreach ($sinImagen as $p) {
+                    $this->line('  - ' . $p->nombre);
+                }
+            }
+            $this->newLine();
+            return self::SUCCESS;
+        }
 
         $asignados = 0;
 
@@ -36,13 +59,14 @@ class AsignarImagenesPatogenos extends Command
                 continue;
             }
 
-            // Nombre del archivo sin extensión = nombre del patógeno
-            $nombrePatogeno = pathinfo($nombreArchivo, PATHINFO_FILENAME);
+            $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
 
-            $patogeno = Patogeno::where('nombre', $nombrePatogeno)->first();
+            $patogeno = $patogenosPorNombre->get($nombreSinExtension)
+                ?? $patogenosPorNormalizado->get($this->normalizarNombre($nombreSinExtension))
+                ?? $this->buscarPatogenoPorInicioDeNombre($nombreSinExtension, $todosPatogenos);
 
             if (!$patogeno) {
-                $this->warn("No se encontró patógeno con nombre: \"{$nombrePatogeno}\"");
+                $this->warn("No se encontró patógeno con nombre: \"{$nombreSinExtension}\"");
                 continue;
             }
 
@@ -55,5 +79,28 @@ class AsignarImagenesPatogenos extends Command
 
         $this->info("Se asignaron {$asignados} imagen(es) a sus patógenos.");
         return self::SUCCESS;
+    }
+
+    private function normalizarNombre(string $nombre): string
+    {
+        $n = Str::ascii($nombre);
+        $n = trim(preg_replace('/\s+/', ' ', $n));
+        return $n;
+    }
+
+    /** Busca un patógeno cuyo nombre sea el inicio del nombre del archivo (ej. "Adenovirus" para "Adenovirus Fritschfurt Strain b90"). */
+    private function buscarPatogenoPorInicioDeNombre(string $nombreArchivo, $todosPatogenos): ?Patogeno
+    {
+        $nombreNorm = $this->normalizarNombre($nombreArchivo);
+        $mejor = null;
+        $mejorLongitud = 0;
+        foreach ($todosPatogenos as $p) {
+            $patNorm = $this->normalizarNombre($p->nombre);
+            if ($patNorm !== '' && Str::startsWith($nombreNorm, $patNorm) && strlen($patNorm) > $mejorLongitud) {
+                $mejor = $p;
+                $mejorLongitud = strlen($patNorm);
+            }
+        }
+        return $mejor;
     }
 }

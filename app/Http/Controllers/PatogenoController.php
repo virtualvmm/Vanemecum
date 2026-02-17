@@ -10,6 +10,7 @@ use App\Models\Fuente;
 use App\Http\Requests\StorePatogenoRequest;
 use App\Http\Requests\UpdatePatogenoRequest; // Usamos el Request dedicado
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -85,12 +86,16 @@ class PatogenoController extends Controller
         // 1. Validar los datos y obtener el array limpio
         $data = $request->validated();
 
-        // 2. Manejo de la subida de imagen (si existe)
+        // 2. Manejo de la subida de imagen (si existe). Se guarda en public/images/patogenos
+        // para que las imágenes se incluyan en Git y estén disponibles al clonar el repo.
         $data['image_url'] = null;
         if ($request->hasFile('image_url')) {
-            $path = $request->file('image_url')->store('patogenos', 'public');
-            // Almacenamos la URL pública
-            $data['image_url'] = Storage::url($path);
+            $dir = public_path('images/patogenos');
+            File::ensureDirectoryExists($dir);
+            $file = $request->file('image_url');
+            $nombre = $file->hashName();
+            $file->move($dir, $nombre);
+            $data['image_url'] = '/images/patogenos/' . $nombre;
         }
 
         // 3. Normalizar checkboxes booleanos
@@ -177,17 +182,15 @@ class PatogenoController extends Controller
         
         $imageUrl = $patogeno->image_url;
 
-        // 2. Manejo de la subida de imagen
+        // 2. Manejo de la subida de imagen (guardar en public/images/patogenos)
         if ($request->hasFile('image_url')) {
-            // Eliminar imagen antigua si existe (convertir URL pública a ruta de disco)
-            if ($patogeno->image_url) {
-                // Obtenemos la ruta relativa al disco eliminando la URL base /storage/
-                $pathToDelete = str_replace(Storage::url(''), '', $patogeno->image_url);
-                Storage::disk('public')->delete($pathToDelete);
-            }
-            // Subir nueva imagen
-            $path = $request->file('image_url')->store('patogenos', 'public');
-            $imageUrl = Storage::url($path);
+            $this->eliminarImagenPatogeno($patogeno->image_url);
+            $dir = public_path('images/patogenos');
+            File::ensureDirectoryExists($dir);
+            $file = $request->file('image_url');
+            $nombre = $file->hashName();
+            $file->move($dir, $nombre);
+            $imageUrl = '/images/patogenos/' . $nombre;
         }
 
         // 3. Actualizar el Patógeno
@@ -220,15 +223,35 @@ class PatogenoController extends Controller
         $patogeno->tratamientos()->detach();
         $patogeno->sintomas()->detach();
 
-        // 2. Eliminar imagen del disco
-        if ($patogeno->image_url) {
-            $pathToDelete = str_replace(Storage::url(''), '', $patogeno->image_url);
-            Storage::disk('public')->delete($pathToDelete);
-        }
+        // 2. Eliminar imagen del disco (public o storage, por compatibilidad)
+        $this->eliminarImagenPatogeno($patogeno->image_url);
 
         // 3. Eliminar Patógeno
         $patogeno->delete();
 
         return redirect()->route('patogenos.index')->with('success', 'Patógeno eliminado correctamente.');
+    }
+
+    /**
+     * Elimina el archivo de imagen de un patógeno.
+     * Soporta URLs en public/images/patogenos (incluidas en Git) y en storage (legacy).
+     */
+    private function eliminarImagenPatogeno(?string $imageUrl): void
+    {
+        if (!$imageUrl) {
+            return;
+        }
+        if (str_starts_with($imageUrl, '/images/patogenos/')) {
+            $path = public_path($imageUrl);
+            if (File::isFile($path)) {
+                File::delete($path);
+            }
+            return;
+        }
+        // Legacy: imagen en storage/app/public
+        $pathToDelete = str_replace(Storage::url(''), '', $imageUrl);
+        if ($pathToDelete !== $imageUrl) {
+            Storage::disk('public')->delete($pathToDelete);
+        }
     }
 }

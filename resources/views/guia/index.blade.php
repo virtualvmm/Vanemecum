@@ -58,7 +58,7 @@
                                         <a href="{{ route('guia.show', $p->id) }}" class="flex-none w-56 min-w-[200px] sm:w-64">
                                             <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg transition-transform transform hover:scale-[1.02] bg-white {{ $p->tipo?->borderClass() ?? 'border-l-4 border-gray-400' }}">
                                                 @if ($p->image_url)
-                                                    <img src="{{ $p->image_url }}" alt="{{ $p->nombre }}" class="h-44 w-full object-cover">
+                                                    <img src="{{ asset($p->image_url) }}" alt="{{ $p->nombre }}" class="h-44 w-full object-cover">
                                                 @else
                                                     <div class="h-44 w-full flex items-center justify-center {{ $p->tipo?->placeholderBgClass() ?? 'bg-gray-500' }} text-white font-semibold">{{ Str::limit($p->nombre, 22) }}</div>
                                                 @endif

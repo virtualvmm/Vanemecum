@@ -83,7 +83,7 @@
                             {{-- Campo Imagen con PREVISUALIZACIÓN Alpine.js (Mejorado para edición) --}}
                             {{-- Inicializamos Alpine con la URL existente si está disponible --}}
                             <div class="mb-4" x-data="{ 
-                                imageUrl: '{{ $patogeno->image_url ?? '' }}',
+                                imageUrl: '{{ $patogeno->image_url ? asset($patogeno->image_url) : '' }}',
                                 fileChange(event) { 
                                     const file = event.target.files[0]; 
                                     if (file) { 
@@ -92,7 +92,7 @@
                                         reader.readAsDataURL(file); 
                                     } else { 
                                         // Si el usuario cancela la selección, volvemos a la imagen original o la borramos
-                                        this.imageUrl = '{{ $patogeno->image_url ?? '' }}';
+                                        this.imageUrl = '{{ $patogeno->image_url ? asset($patogeno->image_url) : '' }}';
                                     } 
                                 } 
                             }">

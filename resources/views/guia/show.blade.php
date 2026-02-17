@@ -39,7 +39,7 @@
                 {{-- Cabecera: imagen a toda la anchura con el nombre encima y fondo clarito --}}
                 <div class="relative -mx-4 -mt-2 sm:-mx-8 sm:-mt-2 rounded-t-xl sm:rounded-t-lg overflow-hidden h-52 sm:h-64">
                     @if ($patogeno->image_url)
-                        <img src="{{ $patogeno->image_url }}" alt="{{ $patogeno->nombre }}" class="absolute inset-0 w-full h-full object-cover">
+                        <img src="{{ asset($patogeno->image_url) }}" alt="{{ $patogeno->nombre }}" class="absolute inset-0 w-full h-full object-cover">
                     @else
                         <div class="absolute inset-0 w-full h-full {{ optional($patogeno->tipo)->placeholderBgClass() ?? 'bg-gray-500' }} flex items-center justify-center">
                             <span class="text-white/40 text-4xl font-bold">{{ Str::limit($patogeno->nombre, 25) }}</span>

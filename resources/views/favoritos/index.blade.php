@@ -24,7 +24,7 @@
                         <div class="relative rounded-xl overflow-hidden shadow hover:shadow-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
                             <a href="{{ route('guia.show', $p->id) }}" class="block">
                                 @if ($p->image_url)
-                                    <img src="{{ $p->image_url }}" alt="{{ $p->nombre }}" class="h-40 w-full object-cover">
+                                    <img src="{{ asset($p->image_url) }}" alt="{{ $p->nombre }}" class="h-40 w-full object-cover">
                                 @else
                                     <div class="h-40 w-full flex items-center justify-center bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 font-semibold">{{ Str::limit($p->nombre, 20) }}</div>
                                 @endif

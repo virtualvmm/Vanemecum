@@ -37,3 +37,36 @@ Proyecto de **Trabajo de Fin de FP** desarrollado en **Laravel** y **PHP**. Este
 ```bash
 git clone https://github.com/virtualvmm/Vanemecum.git
 cd Vanemecum
+```
+
+2. Instalar dependencias y configurar entorno:
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+3. Configurar la base de datos en `.env` (DB_DATABASE, DB_USERNAME, DB_PASSWORD) y ejecutar migraciones:
+
+```bash
+php artisan migrate
+```
+
+4. Poblar la base de datos (patógenos, tipos, síntomas, usuario admin):
+
+```bash
+php artisan db:seed
+```
+
+5. Asignar las imágenes de `public/images/patogenos/` a cada patógeno (las imágenes **sí van en el repositorio**; este comando enlaza cada archivo con su patógeno por nombre):
+
+```bash
+php artisan patogenos:asignar-imagenes
+```
+
+6. (Opcional) Enlace para archivos en `storage`. Solo necesario si la app usa almacenamiento además de las imágenes de patógenos:
+
+```bash
+php artisan storage:link
+```
