@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Tabla obsoleta: la aplicación usa contact_messages (ContactMessage).
-     * No crear para evitar duplicados.
+     * Elimina la tabla contacto_mensajes: duplicada y sin uso.
+     * La aplicación usa contact_messages (modelo ContactMessage).
      */
     public function up(): void
     {
@@ -16,7 +16,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('contacto_mensajes');
+        // No se revierte: la tabla era redundante.
     }
 };
-
